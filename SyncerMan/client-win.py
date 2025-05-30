@@ -1,5 +1,7 @@
 import socket
 from threading import Thread
+from time import sleep
+import keyboard
 from pyperclip import copy, paste
 from settings import SERVER_IP, SERVER_PORT, CLIENT_RECEIVE_PORT
 
@@ -15,9 +17,19 @@ def send_clipboard(text="1"):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.connect((SERVER_IP, SERVER_PORT))
             sock.sendall(text.encode("utf-8"))
-        print("[✓] Sent clipboard to Linux.")
+
+        if text == paste():
+            print("[✓] Sent clipboard to Linux.")
+        else:
+            print(f"[✓] Sent {text} to Linux.")
+
     except Exception as e:
         print(f"[✗] Error sending clipboard to Linux: {e}")
+
+""" Section 7: Define send_text Callback function for sending input texts to linux"""
+def send_text(callback, text=''):
+    text = input("enter text: ")
+    callback(text)
 
 """ Section 5: Receive Clipboard from Linux Server """
 def receive_from_linux():
@@ -33,7 +45,7 @@ def receive_from_linux():
     # Step 3: Accept incoming connections
     while True:
         conn, addr = server.accept()
-        print(f"[🔗] Connection established from {addr}")
+        #print(f"[🔗] Connection established from {addr}")
         Thread(target=handle_client_connection, args=(conn, addr)).start()
 
 """ Section 6: Handle Received Data from Linux Server """
@@ -51,13 +63,29 @@ def handle_client_connection(conn, addr):
     # Step 3: Copy the received data to the clipboard
     copy(decoded)
 
-    print(f"[✓] Data Received from {addr}\n::Written to Linux_Received.txt and copied to clipboard.")
+    print(f"[✓] Data Written to Linux_Received.txt and copied to clipboard.")
+    print(f':: Data: {decoded}')
 
     # Step 4: Close Connection
     conn.close()
 
 
+""" Section 8: Add Hotkeys """
+keyboard.add_hotkey('ctrl+alt+c', send_clipboard)
+keyboard.add_hotkey('ctrl+alt+y', lambda: send_text(send_clipboard))
+
 if __name__ == "__main__":
-    receive_from_linux()
+    print("[⌨] Hotkeys:")
+    print("  - CTRL+ALT+C: Send Clipboard to Linux")
+    print("  - CTRL+ALT+Y: Send Text to Linux")
+
+    Thread(target=receive_from_linux, daemon=True).start()
+
+    """ Section 9: Start Hotkey Listener """
+    while True:
+        keyboard.wait()
+
+
+
 
 

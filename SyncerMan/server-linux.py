@@ -1,4 +1,5 @@
 import socket
+import keyboard
 from pyperclip import copy, paste
 from threading import Thread
 from settings import WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT
@@ -16,8 +17,6 @@ def handle_client(conn, addr):
     except Exception as e:
         decoded = f"[✗] Could not decode clipboard content. Error: {e}"
 
-    print(f"[⇧] Received from Windows({addr}): {decoded}")
-
     # Step 2: Write received data to a file
     with open("PC_Received.txt", "a", encoding="utf-8") as file:
         file.write(decoded + "\n\n")
@@ -25,6 +24,7 @@ def handle_client(conn, addr):
     # Step 3: Copy the received data to the clipboard
     copy(decoded)
     print("[✓] Data written to PC_Received.txt and copied to clipboard.")
+    print(f':: Data: {decoded}')
 
     # Step 4: Close Connection
     conn.close()
@@ -58,21 +58,32 @@ def send_clipboard_to_windows(data="1"):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT))
             s.sendall(data.encode("utf-8"))
-        print("[✓] Sent clipboard to Windows.")
+        if data == paste():
+            print("[✓] Sent clipboard to Windows.")
+        else:
+            print(f"[✓] Sent {data} to Windows.")
+
     except Exception as e:
         print(f"[✗] Could not send to Windows: {e}")
 
+""" Section 10: Define send_text Callback function for sending input texts to windows"""
+def send_text(callback, text=''):
+    text = input("enter text: ")
+    callback(text)
+
+
+""" Section 11: Define Add Hotkeys"""
+keyboard.add_hotkey('ctrl+shift+v', send_clipboard_to_windows)
+keyboard.add_hotkey('ctrl+shift+y', lambda: send_text(send_clipboard_to_windows))
 
 
 if __name__ == "__main__":
-    texts = ''
-    while texts != "exit":
-        texts = input('Enter text for send to linux, Enter 1 for sending clipboard:: ')
+    print("[⌨] Hotkeys:")
+    print("  - CTRL+SHIFT+V: Send Clipboard to Windows")
+    print("  - CTRL+SHIFT+Y: Send Text to Windows")
 
-        if texts == '1':
-            send_clipboard_to_windows()
-        elif texts == 'exit':
-            break
-        else:
-            send_clipboard_to_windows(texts)
+    """ Section 12: Start Server Receiver using Multithreading  """
+    Thread(target=start_receive_server, daemon=True).start()
 
+    while True:
+        keyboard.wait()

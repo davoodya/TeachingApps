@@ -2,3 +2,176 @@ hello
 
 aaa
 
+3. Using `pynput.keyboard`
+```python
+with keyboard.GlobalHotKeys({
+        '<ctrl>+<alt>+c': send_clipboard,
+        '<ctrl>+<shift>+<alt>+c': send_clipboard_files,
+        '<ctrl>+<alt>+<shift>+f': send_files}) as h:
+    h.join()
+```
+4. Advance Usage with `pynput.keyboard`
+```python
+def check_hotkeys():
+    while True:
+        with keyboard.GlobalHotKeys({
+        '<ctrl>+<alt>+c': send_clipboard,
+        '<ctrl>+<shift>+<alt>+c': send_clipboard_files,
+        '<ctrl>+<alt>+<shift>+f': send_files}) as h:
+		    h.join()
+		    
+        time.sleep(0.1)  #Decrease CPU Usage
+
+hotkey_thread = threading.Thread(target=check_hotkeys, daemon=True)
+hotkey_thread.start()
+```
+##### `pynput.keyboard` Example 1 - Simple Usage
+```python
+from pynput import keyboard
+from functools import partial
+import time
+
+#--- توابع با آرگومان‌های مختلف ---
+def send_text(text):
+    print(f"📤 ارسال متن: {text}")
+    #اینجا می‌توانید منطق ارسال واقعی را اضافه کنید
+
+def save_to_file(filename, content):
+    print(f"💾 ذخیره در فایل: {filename}")
+    print(f"محتوا: {content}")
+    #اینجا می‌توانید منطق ذخیره فایل را اضافه کنید
+
+def connect_to_server(ip, port):
+    print(f"🔌 اتصال به سرور: {ip}:{port}")
+    #اینجا می‌توانید منطق اتصال را اضافه کنید
+
+#--- مدیریت Hotkeys با آرگومان ---
+def on_activate_1():
+    send_text("این یک متن پیش‌فرض است")
+
+def on_activate_2():
+    save_to_file("log.txt", "این محتوای لاگ است")
+
+def on_activate_3():
+    connect_to_server("192.168.1.100", 8080)
+
+#--- تنظیم ترکیب کلیدها ---
+hotkeys = {
+    '<ctrl>+<alt>+1': on_activate_1,
+    '<ctrl>+<alt>+2': on_activate_2,
+    '<ctrl>+<alt>+3': on_activate_3,
+    '<ctrl>+<alt>+s': partial(save_to_file, "backup.txt", "این یک بکاپ است"),
+    '<ctrl>+<shift>+c': partial(connect_to_server, "10.0.0.5", 65432)
+}
+
+#--- راه‌اندازی لیسنر ---
+def main():
+    print("""
+    🚀 برنامه مدیریت Hotkeys با pynput
+    ==============================
+    ترکیب کلیدهای فعال:
+    - Ctrl+Alt+1: ارسال متن پیش‌فرض
+    - Ctrl+Alt+2: ذخیره لاگ
+    - Ctrl+Alt+3: اتصال به سرور پیش‌فرض
+    - Ctrl+Alt+s: ذخیره بکاپ
+    - Ctrl+Shift+c: اتصال به سرور جایگزین
+    
+    برای خروج Esc را فشار دهید
+    """)
+
+    with keyboard.GlobalHotKeys(hotkeys) as listener:
+        listener.join()
+
+if __name__ == "__main__":
+    main()
+```
+##### `pynput.keyboard` Example 2 - With Multithreading
+```python
+from pynput import keyboard
+from functools import partial
+import threading
+import time
+import sys
+
+class HotkeyManager:
+    def __init__(self):
+        self.running = True
+        self.hotkeys = {
+            '<ctrl>+<alt>+1': partial(self.action_with_args, "متن پیش‌فرض", 1),
+            '<ctrl>+<alt>+2': partial(self.save_data, "data.log", "اطلاعات سیستمی"),
+            '<ctrl>+<shift>+s': self.system_status,
+            '<ctrl>+<alt>+c': partial(self.connect, "192.168.1.100", 8080)
+        }
+        
+    def start(self):
+        """شروع مانیتورینگ هوتکی‌ها در یک ترد جداگانه"""
+        self.listener_thread = threading.Thread(
+            target=self._start_listener, 
+            daemon=True
+        )
+        self.listener_thread.start()
+        print("✅ سیستم مدیریت هوتکی‌ها فعال شد...")
+
+    def _start_listener(self):
+        """تابع داخلی برای راه‌اندازی لیسنر"""
+        with keyboard.GlobalHotKeys(self.hotkeys) as listener:
+            while self.running:
+                time.sleep(0.1)
+            listener.stop()
+
+    def stop(self):
+        """توقف سیستم"""
+        self.running = False
+        print("⛔ سیستم مدیریت هوتکی‌ها متوقف شد")
+
+    #--- توابع عملیاتی ---
+    def action_wit
+
+keyboard
+
+keyboard
+
+keyboard
+
+keyboard
+
+time.sleep(1e6)
+
+global last_clipboard
+
+while True:
+
+Linux
+
+[✓] Sent clipboard to Linux.
+
+[✓] Sent clipboard to Linux.
+
+[✓] Sent clipboard to Linux.
+
+[✓] Sent clipboard to Linux.
+
+[✓] Sent clipboard to Linux.
+
+[✓] Sent clipboard to Linux.
+
+print("  - CTRL+ALT+C: Send clipboard to Linux")
+
+hello
+
+Listening for Windows
+
+hello
+
+Sent hello to Linux.
+
+telll
+
+Send Clipboard to Linux
+
+davoody
+
+Linux
+
+hello
+

@@ -24,3 +24,7 @@ SyncerMan\server-linux.py
 
 SyncerMan\server-linux.py
 
+Send Clipboard to Windows
+
+65432
+
