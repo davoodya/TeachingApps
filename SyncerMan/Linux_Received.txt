@@ -1,0 +1,26 @@
+if __name__ == "__main__":
+    texts = ''
+    while texts != "exit":
+        texts = input('enter text for send to linux\n:: ')
+        send_clipboard(texts)
+
+if __name__ == "__main__":
+    texts = ''
+    while texts != "exit":
+        texts = input('enter text for send to linux\n:: ')
+        send_clipboard(texts)
+
+print("[!] Clipboard is empty. Nothing to send.")
+
+salam
+
+hello
+
+hello
+
+lllllllllll
+
+SyncerMan\server-linux.py
+
+SyncerMan\server-linux.py
+
