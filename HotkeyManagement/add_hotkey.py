@@ -1,5 +1,4 @@
 import keyboard
-import pynput
 import time
 import sys
 
