@@ -28,3 +28,7 @@ Send Clipboard to Windows
 
 65432
 
+Send Clipboard to Windows
+
+aaaaaa
+

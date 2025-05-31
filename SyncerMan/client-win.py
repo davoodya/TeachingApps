@@ -1,5 +1,5 @@
 import socket
-from threading import Thread
+from threading import Thread, Event
 from time import sleep
 import keyboard
 from pyperclip import copy, paste
@@ -9,22 +9,27 @@ last_clipboard = ""
 
 """ Section 1: Send Clipboard to Linux Server """
 def send_clipboard(text="1"):
+    global last_clipboard
     # Step 1: Get clipboard data if not argument is passed
     if text == "1":
         text = paste()
 
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            sock.connect((SERVER_IP, SERVER_PORT))
-            sock.sendall(text.encode("utf-8"))
+    if text != last_clipboard:
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                sock.connect((SERVER_IP, SERVER_PORT))
+                sock.sendall(text.encode("utf-8"))
 
-        if text == paste():
-            print("[✓] Sent clipboard to Linux.")
-        else:
-            print(f"[✓] Sent {text} to Linux.")
+            if text == paste():
+                print("[✓] Sent clipboard to Linux.")
+                last_clipboard = text
+            else:
+                print(f"[✓] Sent {text} to Linux.")
 
-    except Exception as e:
-        print(f"[✗] Error sending clipboard to Linux: {e}")
+        except Exception as e:
+            print(f"[✗] Error sending clipboard to Linux: {e}")
+    else:
+        print("[✓] Clipboard Unchanged, not sent.")
 
 """ Section 7: Define send_text Callback function for sending input texts to linux"""
 def send_text(callback, text=''):
@@ -70,21 +75,80 @@ def handle_client_connection(conn, addr):
     conn.close()
 
 
-""" Section 8: Add Hotkeys """
-keyboard.add_hotkey('ctrl+alt+c', send_clipboard)
-keyboard.add_hotkey('ctrl+alt+y', lambda: send_text(send_clipboard))
 
-if __name__ == "__main__":
+# keyboard.add_hotkey('ctrl+alt+c', send_clipboard)
+# keyboard.add_hotkey('ctrl+alt+y', lambda: send_text(send_clipboard))
+
+""" Section 8: Add Hotkeys Class """
+class HotkeyManager:
+    def __init__(self):
+        self.exit_event = Event()
+        self.hotkeys = [
+            ('ctrl+alt+c', send_clipboard),
+            ('ctrl+alt+y', lambda: send_text(send_clipboard))
+        ]
+        self.registered_ids = []
+
+
+    def start(self):
+        """ Register Hotkeys & Start Hotkey System """
+        # 1. Clear old hotkeys
+        self._cleanup()
+
+        # 2. Register new hotkeys
+        for hotkey, callback in self.hotkeys:
+            hotkey_id = keyboard.add_hotkey(hotkey, callback)
+            self.registered_ids.append(hotkey_id)
+
+        # 3. Start Hotkey Listener
+        Thread(target=self._listener_thread, daemon=True).start()
+
+
+    def _cleanup(self):
+        """this private method removes old hotkeys """
+
+        # 1. Iterate on all registered hotkeys, then remove them
+        for hotkey_id in self.registered_ids:
+            try:
+                keyboard.remove_hotkey(hotkey_id)
+            except:
+                pass
+        # 2. Clear the list of registered hotkeys
+        self.registered_ids.clear()
+
+
+    def _listener_thread(self):
+        """ Main Thread for keeping the program running """
+        while not self.exit_event.is_set():
+            keyboard.wait()
+            sleep(0.1)  # Prevent high CPU usage
+
+    def stop(self):
+        """ this function Stop the system """
+        self.exit_event.set()
+        self._cleanup()
+
+def main():
+    """ Main Function """
     print("[⌨] Hotkeys:")
     print("  - CTRL+ALT+C: Send Clipboard to Linux")
     print("  - CTRL+ALT+Y: Send Text to Linux")
 
+    # Listening to clipboard from Linux
     Thread(target=receive_from_linux, daemon=True).start()
 
-    """ Section 9: Start Hotkey Listener """
-    while True:
-        keyboard.wait()
+    # Start Hotkey Manager
+    manager = HotkeyManager()
+    manager.start()
 
+    try:
+        while True:
+            sleep(1)
+    except KeyboardInterrupt:
+        manager.stop()
+
+if __name__ == "__main__":
+    main()
 
 
 
