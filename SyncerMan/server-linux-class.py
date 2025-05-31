@@ -93,11 +93,7 @@ def send_text_directly(data):
     except Exception as e:
         print(f"[✗] Could not send to Windows: {e}")
 
-""" Section 11: Define Add Hotkeys"""
-# def refresh_hotkeys():
-#     keyboard.unhook_all_hotkeys()
-#     keyboard.add_hotkey('ctrl+shift+v', send_clipboard_to_windows)
-#     keyboard.add_hotkey('ctrl+shift+y', lambda: send_text(send_clipboard_to_windows))
+
 """ Section 8: Add Hotkeys Class """
 class HotkeyManager:
     def __init__(self):
