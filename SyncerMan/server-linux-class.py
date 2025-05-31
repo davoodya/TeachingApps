@@ -57,19 +57,16 @@ def send_clipboard_to_windows(data="1"):
     if not data.strip():
         print("[!] Clipboard is empty. Nothing to send.")
         return
+
     # Step 3: Send clipboard data to the Windows client
     if data != last_clipboard:
-
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.connect((WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT))
                 s.sendall(data.encode("utf-8"))
 
-            if data == paste():
-                print("[✓] Sent clipboard to Windows.")
-                last_clipboard = data
-            else:
-                print(f"[✓] Sent {data} to Windows.")
+            print(f"\n[✓] Sent clipboard({data}) to Windows.")
+            last_clipboard = data
 
         except Exception as e:
             print(f"[✗] Could not send to Windows: {e}")
@@ -78,11 +75,16 @@ def send_clipboard_to_windows(data="1"):
 
 """ Section 10: Define send_text Callback function for sending input texts to windows"""
 def send_text_to_windows():
-    data = input("enter text: ")
-    if data.strip():  # اگر متن خالی نبود
-        send_text_directly(data)
-    else:
-        print("[!] No text entered.")
+    manager.release_keys('ctrl', 'shift', 'u')
+    keyboard.unhook_all_hotkeys()
+    try:
+        data = input("enter text: ")
+        if data.strip():  # if a text is empty
+            send_text_directly(data)
+        else:
+            print("[!] No text entered.")
+    finally:
+        manager.reset_hotkeys()
 
 def send_text_directly(data):
     try:
@@ -92,6 +94,7 @@ def send_text_directly(data):
         print(f"[✓] Sent {data} to Windows.")
     except Exception as e:
         print(f"[✗] Could not send to Windows: {e}")
+        manager.reset_hotkeys()
 
 
 """ Section 8: Add Hotkeys Class """
@@ -99,8 +102,8 @@ class HotkeyManager:
     def __init__(self):
         self.exit_event = Event()
         self.hotkeys = [
-            ('ctrl+shift+v', send_clipboard_to_windows),
-            ('ctrl+shift+u', send_text_to_windows)
+            ('ctrl+shift+v', self.safe_send_clipboard),
+            ('ctrl+shift+u', self.safe_send_text)
         ]
         self.registered_ids = []
 
@@ -143,8 +146,35 @@ class HotkeyManager:
         self.exit_event.set()
         self._cleanup()
 
+    def safe_send_clipboard(self):
+        self.release_keys('ctrl', 'shift', 'v')
+        send_clipboard_to_windows()
+
+    def safe_send_text(self):
+        self.release_keys('ctrl', 'shift', 'u')
+        keyboard.unhook_all_hotkeys()
+        try:
+            send_text_to_windows()
+        finally:
+            self.reset_hotkeys()
+
+    def reset_hotkeys(self):
+        if 'manager' in globals():
+            manager.stop()
+            manager.start()
+        else:
+            print("manager not defined")
+
+    def release_keys(self, *keys):
+        for key in keys:
+            try:
+                keyboard.release(key)
+            except:
+                pass
+
 
 def main():
+    global manager
     print("[⌨] Hotkeys:")
     print("  - CTRL+SHIFT+V: Send Clipboard to Windows")
     print("  - CTRL+SHIFT+U: Send Text to Windows")
@@ -161,6 +191,7 @@ def main():
             sleep(1)
         except KeyboardInterrupt:
             print("\n[✗] Exiting...")
+            manager.reset_hotkeys()
             manager.stop()
             break
 

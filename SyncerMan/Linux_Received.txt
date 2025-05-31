@@ -169,3 +169,48 @@ hello
 
 hal
 
+Clipboard to Windows
+
+Listening
+
+er
+
+hello
+
+ent hello to Windo
+
+ass
+
+aaa
+
+hasaj
+
+hhaha
+
+Windows
+
+hhh
+
+ha
+
+[✓] Sent ha to Windows.
+
+
+Windows.
+
+checkpoint
+
+[✓] Sent ha to Windows.
+
+as
+
+aaa
+
+Hotkeys:
+
+linux-class.py
+
+aaaa
+
+linux-class.py
+
