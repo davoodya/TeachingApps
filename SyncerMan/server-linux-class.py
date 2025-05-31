@@ -189,13 +189,15 @@ def main():
         while True:
             try:
                 sleep(1)
-                # سایر عملیات دوره‌ای اگر نیاز باشد
-            except Exception as e:  # خطاهای غیرمنتظره
+                # Do nothing, just keep the program running
+
+            except Exception as e:  # Handle any exceptions that may occur
                 print(f"[!] Error: {e}")
                 manager.reset_hotkeys()
-                continue  # ادامه اجرای برنامه
+                continue  # Continue to the next iteration of the loop
+
     except KeyboardInterrupt:
-        print("\n[✗] Graceful shutdown...")
+        print("\n[✗] Goodbye, App shutdown...")
     finally:
         manager.reset_hotkeys()
         manager.stop()
