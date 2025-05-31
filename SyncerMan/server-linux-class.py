@@ -197,7 +197,7 @@ def main():
                 continue  # Continue to the next iteration of the loop
 
     except KeyboardInterrupt:
-        print("\n[✗] Goodbye, App shutdown...")
+        print("\n[✗] Goodbye, Server Side shutting down...")
     finally:
         manager.reset_hotkeys()
         manager.stop()

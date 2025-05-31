@@ -33,8 +33,18 @@ def send_clipboard(text="1"):
 
 """ Section 7: Define send_text Callback function for sending input texts to linux"""
 def send_text(callback, text=''):
-    text = input("enter text: ")
-    callback(text)
+    manager.release_keys('ctrl', 'alt', 'y')
+    keyboard.unhook_all_hotkeys()
+    try:
+        text = input("enter text: ")
+        if text.strip():  # if a text is empty
+            callback(text)
+        else:
+            print("[!] No text entered.")
+
+    finally:
+        manager.reset_hotkeys()
+
 
 """ Section 5: Receive Clipboard from Linux Server """
 def receive_from_linux():
@@ -83,8 +93,8 @@ class HotkeyManager:
     def __init__(self):
         self.exit_event = Event()
         self.hotkeys = [
-            ('ctrl+alt+c', send_clipboard),
-            ('ctrl+alt+y', lambda: send_text(send_clipboard))
+            ('ctrl+alt+c', self.safe_send_clipboard),
+            ('ctrl+alt+y', self.safe_send_text)
         ]
         self.registered_ids = []
 
@@ -127,6 +137,30 @@ class HotkeyManager:
         self.exit_event.set()
         self._cleanup()
 
+    def release_keys(self, *keys):
+        for key in keys:
+            try:
+                keyboard.release(key)
+            except:
+                pass
+
+    def reset_hotkeys(self):
+        if 'manager' in globals():
+            manager.stop()
+            manager.start()
+
+    def safe_send_text(self):
+        self.release_keys('ctrl', 'alt', 'y')
+        keyboard.unhook_all_hotkeys()
+        try:
+            send_text(send_clipboard)
+        finally:
+            self.start()
+
+    def safe_send_clipboard(self):
+        self.release_keys('ctrl', 'alt', 'c')
+        send_clipboard()
+
 def main():
     global manager
     """ Main Function """
@@ -141,27 +175,28 @@ def main():
     manager = HotkeyManager()
     manager.start()
 
-    # try:
-    #     while True:
-    #         try:
-    #             sleep(1)
-    #             # سایر عملیات دوره‌ای اگر نیاز باشد
-    #         except Exception as e:  # خطاهای غیرمنتظره
-    #             print(f"[!] Error: {e}")
-    #             #manager.reset_hotkeys()
-    #             continue  # ادامه اجرای برنامه
-    # except KeyboardInterrupt:
-    #     print("\n[✗] Graceful shutdown...")
-    # finally:
-    #     manager.reset_hotkeys()
-    #     manager.stop()
-
     try:
         while True:
-            sleep(1)
+            try:
+                sleep(1)
+                # keep the app Always is running
+            except Exception as e:  # handle any exceptions
+                print(f"[!] Error: {e}")
+                manager.reset_hotkeys()
+                continue  # continue to the next iteration of the loop
+
     except KeyboardInterrupt:
-        print("\n[✗] Exiting...")
+        print("\n[✗] Goodbye, Client Side shutting down...")
+    finally:
+        manager.reset_hotkeys()
         manager.stop()
+
+    # try:
+    #     while True:
+    #         sleep(1)
+    # except KeyboardInterrupt:
+    #     print("\n[✗] Exiting...")
+    #     manager.stop()
 
 
 if __name__ == "__main__":

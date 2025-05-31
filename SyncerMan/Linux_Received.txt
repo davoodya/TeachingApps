@@ -214,3 +214,229 @@ aaaa
 
 linux-class.py
 
+Received Data: hello
+
+
+TRL+SHIFT+V
+
+Received Data: hello
+
+Received Data: hello
+
+Received Data: hello
+
+asash
+
+hello
+
+TRL+SHIFT+V
+
+asasa
+
+hello
+
+hsha
+
+sudo python3 server-linux-class.py
+
+Received Data: hh
+
+h
+
+aaaaa
+
+Clipboard Unchanged, not sent.
+
+d Unchanged, not sent.
+
+
+to Windows.
+
+
+pboard
+
+ha
+
+hhhhhh
+
+ived Data:  Linux
+[✓] Data written to PC_Received.txt and copied to clipboard.
+:: Received Data: hello
+Received Data: hello
+
+[✓] Sent clipboard(Received Data: hello
+) to Windows.
+Received Data: hello
+[✓] Clipboard Unchanged, not sent.
+Received Data: hello
+[✓] Clipboard Unchanged, not sent.
+TRL+SHIFT+V
+[✓] Sent clipboard(TRL+SHIFT+V) to Windows.
+asash
+enter text: [✓] Sent Received Data: hello to Windows.
+ash
+enter text: [✓] Sent Received Data: hello to Windows.
+uasuy^Y
+
+
+
+j
+enter text: [✓] Sent Received Data: hello to Windows.
+^Y^Y^[OMente[✓] Sent asash to Windows.
+^C
+[✗] Goodbye, Server Side shutting down...
+                                                                                                                                                 
+┌──(daya㉿kaliVM)-[~/Desktop/SyncerMan]
+┌──(daya㉿kaliVM)-[~/Desktop/SyncerMan]
+└─$ sudo python3 server-linux-class.py
+[⌨] Hotkeys:
+  - CTRL+SHIFT+V: Send Clipboard to Windows
+  - CTRL+SHIFT+U: Send Text to Windows
+[📡] Listening for Windows Clipboard on port: 65432
+enter text: hello
+[✓] Sent hello to Windows.
+TRL+SHIFT+V
+[✓] Sent clipboard(TRL+SHIFT+V) to Windows.
+[✓] Data written to PC_Received.txt and copied to clipboard.
+:: Received Data: ed.txt and copied to clipboard.
+[✓] Data written to PC_Received.txt and copied to clipboard.
+:: Received Data: ✓]
+[✓] Data written to PC_Received.txt and copied to clipboard.
+:: Received Data: hello
+[✓] Data written to PC_Received.txt and copied to clipboard.
+:: Received Data: asdsadasdas
+enasasa     
+[✓] Sent asasa to Windows.
+enter text: hello
+[✓] Sent hello to Windows.
+enter text: hsha
+[✓] Sent hsha to Windows.
+sudo python3 server-linux-class.py
+[✓] Sent clipboard(sudo python3 server-linux-class.py) to Windows.
+^C
+[✗] Goodbye, Server Side shutting down...
+                                                                                                                                                 
+┌──(daya㉿kaliVM)-[~/Desktop/SyncerMan]
+└─$ sudo python3 server-linux-class.py
+[⌨] Hotkeys:
+  - CTRL+SHIFT+V: Send Clipboard to Windows
+  - CTRL+SHIFT+U: Send Text to Windows
+[📡] Listening for Windows Clipboard on port: 65432
+^C
+[✗] Goodbye, Server Side shutting down...
+                                                                                                                                                 
+┌──(daya㉿kaliVM)-[~/Desktop/SyncerMan]
+┌──(daya㉿kaliVM)-[~/Desktop/SyncerMan]
+
+┌──(daya㉿kaliVM)-[~/Desktop/SyncerMan]
+└─$ sudo python3 server-linux-class.py
+[⌨] Hotkeys:
+  - CTRL+SHIFT+V: Send Clipboard to Windows
+  - CTRL+SHIFT+U: Send Text to Windows
+[📡] Listening for Windows Clipboard on port: 65432
+^C
+[✗] Goodbye, Server Side shutting down...
+
+
+if __name__ == "__main__":
+
+    texts = ''
+
+    while texts != "exit":
+
+        texts = input('enter text for send to linux\n:: ')
+
+        send_clipboard(texts)
+
+if __name__ == "__main__":
+
+    texts = ''
+
+    while texts != "exit":
+
+        texts = input('enter text for send to linux\n:: ')
+
+        send_clipboard(texts)
+
+print("[!] Clipboard is empty. Nothing to send.")
+
+salam
+
+hello
+
+hello
+
+lllllllllll
+
+SyncerMan\server-linux.py
+
+SyncerMan\server-linux.py
+
+Send Clipboard to Windows
+
+65432
+
+Send Clipboard to Windows
+
+aaaaaa
+
+65432
+
+asa
+
+asa
+
+ha
+
+ha
+
+ Windows.
+
+ Windows.
+
+ Windows.
+
+ Windows.
+
+ Windows.
+
+ CTRL+SHIFT+Y
+
+ hello
+
+ hello
+
+ hello
+
+ha;
+
+ha;
+
+s Clipboard on port: 6543
+
+s Clipboard on port: 6543
+
+564
+
+564
+
+hhhasasa
+
+hhhasasa
+
+Clipboard
+
+
+
+nkjhda
+
+helllll
+
+helllll
+
+Sent clipboard(helllll) to Windows.
+
+he
+
+kkkkkk
+
