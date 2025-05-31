@@ -27,7 +27,7 @@ def handle_client(conn, addr):
     # Step 3: Copy the received data to the clipboard
     copy(decoded)
     print("[✓] Data written to PC_Received.txt and copied to clipboard.")
-    print(f':: Data: {decoded}')
+    print(f':: Received Data: {decoded}')
 
     # Step 4: Close Connection
     conn.close()

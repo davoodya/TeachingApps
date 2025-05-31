@@ -69,7 +69,7 @@ def handle_client_connection(conn, addr):
     copy(decoded)
 
     print(f"[✓] Data Written to Linux_Received.txt and copied to clipboard.")
-    print(f':: Data: {decoded}')
+    print(f':: Received Data: {decoded}')
 
     # Step 4: Close Connection
     conn.close()
