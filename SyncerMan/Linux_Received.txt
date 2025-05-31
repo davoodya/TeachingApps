@@ -32,3 +32,140 @@ Send Clipboard to Windows
 
 aaaaaa
 
+65432
+
+asa
+
+asa
+
+ha
+
+ha
+
+ Windows.
+
+ Windows.
+
+ Windows.
+
+ Windows.
+
+ Windows.
+
+ CTRL+SHIFT+Y
+
+ hello
+
+ hello
+
+ hello
+
+ha;
+
+ha;
+
+s Clipboard on port: 6543
+
+s Clipboard on port: 6543
+
+564
+
+564
+
+hhhasasa
+
+hhhasasa
+
+Clipboard
+
+PC_Received.txt and copied to clipboard.
+
+[✓] Data written to PC_Received.txt and copied to clipboard.
+
+
+Windows
+
+  - CTRL+SHIFT+U: Send Text to Windows
+
+
+[✓] Data written to PC_Received.txt and copied to clipboard.
+
+davood
+
+Sent davood to Windows.
+
+
+Sent davood to Windows.
+
+
+
+Listening for Windows Clipboard on port: 65432
+
+
+Listening for Windows Clipboard on port: 65432
+
+65432
+
+HELLO
+
+Clipboard
+
+zzzzzz
+
+Why Not?
+
+hello
+
+[✓] Data written to PC_Received.txt and copied to clipboard.
+
+
+[✓] Data written to PC_Received.txt and copied to clipboard.
+
+[✓] Data written to PC_Received.txt and copied to clipboard.
+
+Listening for Windows Clipboard on port: 65432
+
+da
+
+h
+
+jhkahsd
+
+aha
+
+ha
+
+Listening for Windows Clipboard on port: 65432[✓] Clipboard Unchanged, not sent.
+
+
+Listening for Windows Clipboard on port: 65432Listening for Windows Clipboard on port: 65432[✓] Clipboard Unchanged, not sent.
+
+h
+
+HAJD
+
+Listening for Windows Clipboard on port: 65432[✓] Clipboard Unchanged, not sent.
+
+copied to clipboard.
+
+DA
+
+SALA,
+
+not sent.
+
+
+copied to clipboard.not sent.
+
+not sent.
+
+	SDAS
+
+ADADASDAS
+
+HAHA
+
+hello
+
+hal
+

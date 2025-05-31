@@ -105,7 +105,7 @@ class HotkeyManager:
 
 
     def _cleanup(self):
-        """this private method removes old hotkeys """
+        """ this private method removes old hotkeys """
 
         # 1. Iterate on all registered hotkeys, then remove them
         for hotkey_id in self.registered_ids:
