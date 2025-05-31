@@ -75,7 +75,6 @@ def handle_client_connection(conn, addr):
     conn.close()
 
 
-
 # keyboard.add_hotkey('ctrl+alt+c', send_clipboard)
 # keyboard.add_hotkey('ctrl+alt+y', lambda: send_text(send_clipboard))
 
@@ -129,6 +128,7 @@ class HotkeyManager:
         self._cleanup()
 
 def main():
+    global manager
     """ Main Function """
     print("[⌨] Hotkeys:")
     print("  - CTRL+ALT+C: Send Clipboard to Linux")
@@ -141,11 +141,28 @@ def main():
     manager = HotkeyManager()
     manager.start()
 
+    # try:
+    #     while True:
+    #         try:
+    #             sleep(1)
+    #             # سایر عملیات دوره‌ای اگر نیاز باشد
+    #         except Exception as e:  # خطاهای غیرمنتظره
+    #             print(f"[!] Error: {e}")
+    #             #manager.reset_hotkeys()
+    #             continue  # ادامه اجرای برنامه
+    # except KeyboardInterrupt:
+    #     print("\n[✗] Graceful shutdown...")
+    # finally:
+    #     manager.reset_hotkeys()
+    #     manager.stop()
+
     try:
         while True:
             sleep(1)
     except KeyboardInterrupt:
+        print("\n[✗] Exiting...")
         manager.stop()
+
 
 if __name__ == "__main__":
     main()

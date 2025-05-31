@@ -185,15 +185,29 @@ def main():
     manager = HotkeyManager()
     manager.start()
 
+    try:
+        while True:
+            try:
+                sleep(1)
+                # سایر عملیات دوره‌ای اگر نیاز باشد
+            except Exception as e:  # خطاهای غیرمنتظره
+                print(f"[!] Error: {e}")
+                manager.reset_hotkeys()
+                continue  # ادامه اجرای برنامه
+    except KeyboardInterrupt:
+        print("\n[✗] Graceful shutdown...")
+    finally:
+        manager.reset_hotkeys()
+        manager.stop()
 
-    while True:
-        try:
-            sleep(1)
-        except KeyboardInterrupt:
-            print("\n[✗] Exiting...")
-            manager.reset_hotkeys()
-            manager.stop()
-            break
+    # while True:
+    #     try:
+    #         sleep(1)
+    #     except KeyboardInterrupt:
+    #         print("\n[✗] Exiting...")
+    #         manager.reset_hotkeys()
+    #         manager.stop()
+    #         break
 
 
 
