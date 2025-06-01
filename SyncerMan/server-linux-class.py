@@ -78,7 +78,7 @@ def send_text_to_windows():
     manager.release_keys('ctrl', 'shift', 'u')
     keyboard.unhook_all_hotkeys()
     try:
-        data = input("enter text: ")
+        data = input("enter text(sending to Windows): ")
         if data.strip():  # if a text is empty
             send_text_directly(data)
         else:
