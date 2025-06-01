@@ -32,19 +32,28 @@ def send_clipboard(text="1"):
         print("[✓] Clipboard Unchanged, not sent.")
 
 """ Section 7: Define send_text Callback function for sending input texts to linux"""
-def send_text(callback, text=''):
+def send_text_to_linux():
     manager.release_keys('ctrl', 'alt', 'y')
     keyboard.unhook_all_hotkeys()
     try:
-        text = input("enter text: ")
+        text = input("enter text(sending to Linux): ")
         if text.strip():  # if a text is empty
-            callback(text)
+            send_text_directly(text)
         else:
             print("[!] No text entered.")
-
     finally:
         manager.reset_hotkeys()
 
+def send_text_directly(text):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.connect((SERVER_IP, SERVER_PORT))
+            sock.sendall(text.encode("utf-8"))
+        print(f"[✓] Sent({text}) to Linux.")
+
+    except Exception as e:
+        print(f"[✗] Could not send({text}) to Linux: {e}")
+        manager.reset_hotkeys()
 
 """ Section 5: Receive Clipboard from Linux Server """
 def receive_from_linux():
@@ -153,7 +162,7 @@ class HotkeyManager:
         self.release_keys('ctrl', 'alt', 'y')
         keyboard.unhook_all_hotkeys()
         try:
-            send_text(send_clipboard)
+            send_text_to_linux()
         finally:
             self.start()
 
