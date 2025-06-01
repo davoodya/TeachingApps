@@ -3,6 +3,7 @@ import keyboard
 from time import sleep
 from pyperclip import copy, paste
 from threading import Thread, Event
+from os import path, makedirs
 from settings import WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
@@ -10,26 +11,52 @@ last_clipboard = ""
 """ Section 3: Handle the received Data from Windows Client """
 def handle_client(conn, addr):
     """ this function handling received data from the Windows client """
+    first_bytes = conn.recv(5)
 
-    # Step 0: Receive data from the Windows client
-    data = conn.recv(4096)
+    # if receive a file signal from Windows
+    if first_bytes == b"FILE\n":
+        # Step 1: get file name
+        filename = b""
+        while not filename.endswith(b"\n"):
+            filename += conn.recv(1)
+        filename = filename.decode().strip()
 
-    # Step 1: Decode the received data
-    try:
-        decoded = data.decode("utf-8")
-    except Exception as e:
-        decoded = f"[✗] Could not decode clipboard content. Error: {e}"
+        # Step 2: Create directory for saving file and get the full path
+        makedirs("WIN_Received", exist_ok=True)
+        save_path = path.join("WIN_Received", filename)
 
-    # Step 2: Write received data to a file
-    with open("PC_Received.txt", "a", encoding="utf-8") as file:
-        file.write(decoded + "\n\n")
+        # Step 3: Save file into disk
+        with open(save_path, "wb") as f:
+            while True:
+                data = conn.recv(4096)
+                if not data:
+                    break
+                f.write(data)
+        print(f"[💾] File received from Windows and saved to {save_path}")
 
-    # Step 3: Copy the received data to the clipboard
-    copy(decoded)
-    print("[✓] Data written to PC_Received.txt and copied to clipboard.")
-    print(f':: Received Data: {decoded}')
+    # else, receive clipboard content
+    else:
+        # Step 0: Receive data from the Windows client
+        data = first_bytes + conn.recv(4096)
 
-    # Step 4: Close Connection
+        # Step 1: Decode the received data
+        try:
+            decoded = data.decode("utf-8")
+        except Exception as e:
+            decoded = f"[✗] Could not decode clipboard content. Error: {e}"
+
+        print(f'[⇧] Received from Windows: {decoded}')
+
+        # Step 2: Write received data to a file
+        with open("PC_Received.txt", "a", encoding="utf-8") as file:
+            file.write(decoded + "\n\n")
+
+        # Step 3: Copy the received data to the clipboard
+        copy(decoded)
+        print("[✓] Data written to PC_Received.txt and copied to clipboard.")
+
+
+    # End Step: Close Connection
     conn.close()
 
 """ Section 2: Start Listening to the Windows Client """
