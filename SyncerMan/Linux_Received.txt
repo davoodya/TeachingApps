@@ -440,3 +440,16 @@ he
 
 kkkkkk
 
+PCRecieved.txt
+
+Clipboard
+
+hhhhhh
+
+hello
+
+:: Received Data: from Linux on Port: 65433
+
+
+hello my name
+
