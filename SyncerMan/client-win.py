@@ -3,6 +3,9 @@ from threading import Thread, Event
 from time import sleep
 import keyboard
 from pyperclip import copy, paste
+import tkinter as tk
+from tkinter import filedialog # used for asking files for sending to linux server
+from os import path
 from settings import SERVER_IP, SERVER_PORT, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
@@ -93,6 +96,38 @@ def handle_client_connection(conn, addr):
     # Step 4: Close Connection
     conn.close()
 
+def send_files_to_linux():
+    # Step 1: Open a file dialog to select files
+    root = tk.Tk()
+    root.withdraw()
+    file_paths = filedialog.askopenfilenames(title="Select Files for Sending to Linux")
+
+    # Step 2: Send the selected files to the Linux server
+    for file_path in file_paths:
+        try:
+            # Step 2.1: Open and read the file
+            with open(file_path, 'rb') as file:
+                file_data = file.read()
+
+            # Step 2.2: Get file name
+            file_name = path.basename(file_path)
+
+            # Step 2.3: Create a socket and Connect to the Linux server
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((SERVER_IP, SERVER_PORT))
+
+            # Step 2.4: Send the file signal + file name and file data
+            sock.sendall(b"FILE\n")
+            sock.sendall(f"{file_name}\n".encode())
+            sock.sendall(file_data)
+            # Step 2.5: Close the socket
+            sock.close()
+            print(f"[✓] Sent {file_name} to Linux.")
+
+        except Exception as e:
+            print(f"[!] Failed to send {file_path}: {e}")
+
+
 
 # keyboard.add_hotkey('ctrl+alt+c', send_clipboard)
 # keyboard.add_hotkey('ctrl+alt+y', lambda: send_text(send_clipboard))
@@ -103,7 +138,8 @@ class HotkeyManager:
         self.exit_event = Event()
         self.hotkeys = [
             ('ctrl+alt+c', self.safe_send_clipboard),
-            ('ctrl+alt+y', self.safe_send_text)
+            ('ctrl+alt+y', self.safe_send_text),
+            ('ctrl+alt+f', self.safe_send_files)
         ]
         self.registered_ids = []
 
@@ -170,12 +206,18 @@ class HotkeyManager:
         self.release_keys('ctrl', 'alt', 'c')
         send_clipboard()
 
+    def safe_send_files(self):
+        print("[🗃️] Files Sending Triggered: \n")
+        self.release_keys('ctrl', 'alt', 'f')
+        send_files_to_linux()
+
 def main():
     global manager
     """ Main Function """
     print("[⌨] Hotkeys:")
     print("  - CTRL+ALT+C: Send Clipboard to Linux")
     print("  - CTRL+ALT+Y: Send Text to Linux")
+    print("  - CTRL+ALT+F: Send Files to Linux")
 
     # Listening to clipboard from Linux
     Thread(target=receive_from_linux, daemon=True).start()
