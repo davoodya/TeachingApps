@@ -5,7 +5,8 @@ import keyboard
 from pyperclip import copy, paste
 import tkinter as tk
 from tkinter import filedialog # used for asking files for sending to linux server
-from os import path, makedirs
+from os import path, makedirs, remove
+from shutil import make_archive
 from settings import SERVER_IP, SERVER_PORT, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
@@ -154,6 +155,55 @@ def send_files_to_linux():
         except Exception as e:
             print(f"[!] Failed to send {file_path}: {e}")
 
+def send_directory_to_linux():
+    # Step 1: Open a file dialog to select the directory
+    root = tk.Tk()
+    root.withdraw()
+    dir_path = filedialog.askdirectory(title="Select Directory for Sending to Linux")
+
+    if dir_path and path.isdir(dir_path):
+        archive_path = ''
+        try:
+            # Step 1: Create a zip archive of the directory
+            basename = path.basename(dir_path)
+            archive_path = f"/tmp/{basename}_archive.zip"
+            make_archive(archive_path.replace(".zip", ""), 'zip', dir_path)
+
+            # Step 2: Send the zip archive to the Linux server
+            send_file_to_linux(archive_path)
+
+            # Step 3: Remove the temporary zip archive
+            remove(archive_path)
+            print(f"[✓] Directory {basename} sent as archive to Linux Server.")
+
+        except Exception as e:
+            print(f"[!] Could not send directory({dir_path}) to Linux Server:\nError: {e}")
+            if path.exists(archive_path):
+                remove(archive_path)
+
+def send_file_to_linux(file_path):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            # Connect to the Linux server and send the file signal
+            sock.connect((SERVER_IP, SERVER_PORT))
+            sock.sendall(b"FILE\n")
+
+            # get the filename and send it to the linux server
+            filename = path.basename(file_path)
+            sock.sendall(f"{filename}\n".encode())
+
+            # send file data to the linux server
+            with open(file_path, "rb") as f:
+                while True:
+                    data = f.read(4096)
+                    if not data:
+                        break
+                    sock.sendall(data)
+
+        print(f"[✓] File {filename} sent to Linux Server.")
+    except Exception as e:
+        print(f"[!] Could not send file({filename}) to Linux Server.!\nError: {e}")
+
 
 
 # keyboard.add_hotkey('ctrl+alt+c', send_clipboard)
@@ -166,7 +216,8 @@ class HotkeyManager:
         self.hotkeys = [
             ('ctrl+alt+c', self.safe_send_clipboard),
             ('ctrl+alt+y', self.safe_send_text),
-            ('ctrl+alt+f', self.safe_send_files)
+            ('ctrl+alt+f', self.safe_send_files),
+            ('ctrl+alt+d', self.safe_send_directory)
         ]
         self.registered_ids = []
 
@@ -238,6 +289,11 @@ class HotkeyManager:
         self.release_keys('ctrl', 'alt', 'f')
         send_files_to_linux()
 
+    def safe_send_directory(self):
+        print("[📁] Directory Sending Triggered: \n")
+        self.release_keys('ctrl', 'alt', 'd')
+        send_directory_to_linux()
+
 def main():
     global manager
     """ Main Function """
@@ -245,6 +301,7 @@ def main():
     print("  - CTRL+ALT+C: Send Clipboard to Linux")
     print("  - CTRL+ALT+Y: Send Text to Linux")
     print("  - CTRL+ALT+F: Send Files to Linux")
+    print("  - CTRL+ALT+D: Send Directory to Linux")
 
     # Listening to clipboard from Linux
     Thread(target=receive_from_linux, daemon=True).start()
