@@ -23,9 +23,13 @@ def handle_client(conn, addr):
             filename += conn.recv(1)
         filename = filename.decode().strip()
 
-        # Step 2: Create directory for saving file and get the full path
-        makedirs("WIN_Received", exist_ok=True)
-        save_path = path.join("WIN_Received", filename)
+        # Step 2: get the current path of the script to create "WIN_Received" directory in there
+        #current_dir = os.getcwd()
+        script_dir = path.dirname(path.abspath(__file__))
+        windows_received_dir = path.join(script_dir, "WIN_Received")
+
+        makedirs(windows_received_dir, exist_ok=True)
+        save_path = path.join(windows_received_dir, filename)
 
         # Step 3: Save file into disk
         with open(save_path, "wb") as f:
