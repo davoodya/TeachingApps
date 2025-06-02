@@ -3,9 +3,10 @@ import keyboard
 from time import sleep
 from pyperclip import copy, paste
 from threading import Thread, Event
-from os import path, makedirs
+from os import path, makedirs, remove
 import tkinter as tk
 from tkinter import filedialog
+from shutil import make_archive
 from settings import WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
@@ -184,6 +185,33 @@ def send_file_to_windows(file_path):
 
     except Exception as e:
         print(f"[!] Could not send file({filename}) to Windows Client.!\nError: {e}")
+
+def send_directory_to_windows():
+    # Step 1: Get the directory path
+    dir_path = select_directory()
+    # if dir_path entered and it is a directory
+    if dir_path and path.isdir(dir_path):
+        archive_path = ''
+        try:
+            # Step 2: Create a zip archive of the directory
+            basename = path.basename(dir_path)
+            archive_path = f"/tmp/{basename}_archive.zip"
+            make_archive(archive_path.replace('.zip', ''), 'zip', dir_path)
+
+            # Step 3: send the zip file to windows
+            send_file_to_windows(archive_path)
+
+            # Step 4: Remove the temporary zip file
+            remove(archive_path)
+            print(f"[✓] Directory {basename} sent as archive to Windows Client.")
+
+        except Exception as e:
+            print(f"[!] Could not send directory({dir_path}) to Windows Client.!\nError: {e}")
+            if path.exists(archive_path):
+                remove(archive_path)
+    else:
+        print(f"[!] {dir_path} is not a valid directory!.\n")
+
 
 
 """ Section 8: Add Hotkeys Class """
