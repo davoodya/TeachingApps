@@ -156,6 +156,35 @@ def send_files_to_windows():
                 except Exception as e:
                     print(f"[!] Failed to send {file_path} to Windows:\nError: {e}")
 
+def select_directory():
+    root = tk.Tk()
+    root.withdraw()
+    dir_path = filedialog.askdirectory(title="Select Directory for Sending to Windows")
+    return dir_path
+
+def send_file_to_windows(file_path):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            # Connect to the Linux server and send the file signal
+            sock.connect((WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT))
+            sock.sendall(b"FILE\n")
+
+            # get the filename and send it to the linux server
+            filename = path.basename(file_path)
+            sock.sendall(f"{filename}\n".encode())
+
+            # send file data to the linux server
+            with open(file_path, 'rb') as f:
+                while True:
+                    data = f.read(4096)
+                    if not data:
+                        break
+                    sock.sendall(data)
+        print(f"[✓] File {filename} sent to Windows Client.")
+
+    except Exception as e:
+        print(f"[!] Could not send file({filename}) to Windows Client.!\nError: {e}")
+
 
 """ Section 8: Add Hotkeys Class """
 class HotkeyManager:
