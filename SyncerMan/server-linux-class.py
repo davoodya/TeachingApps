@@ -285,6 +285,14 @@ class HotkeyManager:
         finally:
             self.reset_hotkeys()
 
+    def safe_send_directory_to_windows(self):
+        self.release_keys('ctrl', 'shift', 'd')
+        keyboard.unhook_all_hotkeys()
+        try:
+            send_directory_to_windows()
+        finally:
+            self.reset_hotkeys()
+
     def reset_hotkeys(self):
         if 'manager' in globals():
             manager.stop()
