@@ -1,4 +1,5 @@
 import socket
+from idlelib.browser import file_open
 from threading import Thread, Event
 from time import sleep
 import keyboard
@@ -211,8 +212,27 @@ def send_directory_to_linux():
     else:
         print(f"[!] {dir_path} is not a valid directory!.\n")
 
+# OOP Standard for sending files to Linux
+def select_files():
+    root = tk.Tk()
+    root.withdraw()
+    file_paths = filedialog.askopenfilenames(title="Select Files for Sending to Linux")
+    return file_paths
 
+def send_files_to_linux_oop():
+    # Step 1: Open a file dialog to select files
+    file_paths = select_files()
 
+    if file_paths:
+        # Step 2: Send the selected files to the Linux server
+        for file_path in file_paths:
+            if path.isfile(file_path):
+                send_file_to_linux(file_path)
+                sleep(0.5) # add delay for prevent high CPU usage
+            else:
+                print(f"[!] {file_path} is not a valid file!.\n")
+    else:
+        print(f"[!] No files selected!.\n")
 
 
 # keyboard.add_hotkey('ctrl+alt+c', send_clipboard)
@@ -296,7 +316,7 @@ class HotkeyManager:
     def safe_send_files(self):
         print("[🗃️] Files Sending Triggered: \n")
         self.release_keys('ctrl', 'alt', 'f')
-        send_files_to_linux()
+        send_files_to_linux_oop()
 
     def safe_send_directory(self):
         print("[📁] Directory Sending Triggered: \n")
