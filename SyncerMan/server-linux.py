@@ -212,6 +212,24 @@ def send_directory_to_windows():
     else:
         print(f"[!] {dir_path} is not a valid directory!.\n")
 
+# OOP Standard for sending files to Windows
+def select_files():
+    root = tk.Tk()
+    root.withdraw()
+    file_paths = filedialog.askopenfilenames(title="Select Files for Sending to Windows")
+    return file_paths
+
+def send_files_to_windows_oop():
+    file_paths = select_files()
+    if file_paths:
+        for file_path in file_paths:
+            if path.isfile(file_path):
+                send_file_to_windows(file_path)
+                sleep(0.5)
+            else:
+                print(f"[!] {file_path} is not a valid file!.\n")
+    else:
+        print(f"[!] No files selected!.\n")
 
 
 """ Section 8: Add Hotkeys Class """
@@ -282,7 +300,7 @@ class HotkeyManager:
         self.release_keys('ctrl', 'shift', 'f')
         keyboard.unhook_all_hotkeys()
         try:
-            send_files_to_windows()
+            send_files_to_windows_oop()
         finally:
             self.reset_hotkeys()
 
