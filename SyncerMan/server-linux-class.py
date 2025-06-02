@@ -4,6 +4,8 @@ from time import sleep
 from pyperclip import copy, paste
 from threading import Thread, Event
 from os import path, makedirs
+import tkinter as tk
+from tkinter import filedialog
 from settings import WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
@@ -123,6 +125,33 @@ def send_text_directly(data):
         print(f"[✗] Could not send to Windows: {e}")
         manager.reset_hotkeys()
 
+def send_files_to_windows():
+    # Step 1: get the file path => Simulate => def select_files() => return file_paths
+    root = tk.Tk()
+    root.withdraw()
+    file_paths = filedialog.askopenfilenames(title="Select Files for Sending to Windows")
+
+    # Step 2: if file_paths is not empty, iterate over all selected files => Simulate => send_files_to_windows()
+    if file_paths:
+        for file_path in file_paths:
+            if path.isfile(file_path):
+                # Step 3: send a file to windows => Simulate => send_file_to_windows(file_path)
+                try:
+                    with open(file_path, 'rb') as f:
+                        file_data = f.read()
+
+                    file_name = path.basename(file_path)
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    sock.connect((WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT))
+                    sock.sendall(b"FILE\n")
+                    sock.sendall(f"{file_name}\n".encode())
+                    sock.sendall(file_data)
+                    sock.close()
+                    print(f"[✓] Sent {file_name} to Windows.")
+
+                except Exception as e:
+                    print(f"[!] Failed to send {file_path} to Windows:\nError: {e}")
+
 
 """ Section 8: Add Hotkeys Class """
 class HotkeyManager:
@@ -130,7 +159,8 @@ class HotkeyManager:
         self.exit_event = Event()
         self.hotkeys = [
             ('ctrl+shift+v', self.safe_send_clipboard),
-            ('ctrl+shift+u', self.safe_send_text)
+            ('ctrl+shift+y', self.safe_send_text),
+            ('ctrl+shift+f', self.safe_send_file_to_windows)
         ]
         self.registered_ids = []
 
@@ -182,6 +212,15 @@ class HotkeyManager:
         keyboard.unhook_all_hotkeys()
         try:
             send_text_to_windows()
+        finally:
+            self.reset_hotkeys()
+
+    def safe_send_file_to_windows(self):
+        print("[🗃️] Files Sending Triggered: \n")
+        self.release_keys('ctrl', 'shift', 'f')
+        keyboard.unhook_all_hotkeys()
+        try:
+            send_files_to_windows()
         finally:
             self.reset_hotkeys()
 
