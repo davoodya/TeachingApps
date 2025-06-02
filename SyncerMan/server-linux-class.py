@@ -221,7 +221,8 @@ class HotkeyManager:
         self.hotkeys = [
             ('ctrl+shift+v', self.safe_send_clipboard),
             ('ctrl+shift+y', self.safe_send_text),
-            ('ctrl+shift+f', self.safe_send_file_to_windows)
+            ('ctrl+shift+f', self.safe_send_file_to_windows),
+            ('ctrl+shift+d', self.safe_send_directory_to_windows)
         ]
         self.registered_ids = []
 
@@ -314,6 +315,7 @@ def main():
     print("  - CTRL+SHIFT+V: Send Clipboard to Windows")
     print("  - CTRL+SHIFT+U: Send Text to Windows")
     print("  - CTRL+SHIFT+F: Send Files to Windows")
+    print("  - CTRL+SHIFT+D: Send Directory to Windows")
 
     """ Section 12: Start Server Receiver using Multithreading  """
     Thread(target=start_receive_server, daemon=True).start()
