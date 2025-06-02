@@ -5,7 +5,7 @@ import keyboard
 from pyperclip import copy, paste
 import tkinter as tk
 from tkinter import filedialog # used for asking files for sending to linux server
-from os import path
+from os import path, makedirs
 from settings import SERVER_IP, SERVER_PORT, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
@@ -77,21 +77,47 @@ def receive_from_linux():
 
 """ Section 6: Handle Received Data from Linux Server """
 def handle_client_connection(conn, addr):
-    # Step 0: Receive data from the Linux server
-    data = conn.recv(4096)
+    first_bytes = conn.recv(5)
+    # If Received data is a file
+    if first_bytes == b"FILE\n":
+        filename = b""
+        while not filename.endswith(b"\n"):
+            filename += conn.recv(1)
+        filename = filename.decode().strip()
 
-    # Step 1: Decode the received data
-    decoded = data.decode("utf-8")
+        # get the current directory for create "Linux_Received" directory in there
+        script_dir = path.dirname(path.abspath(__file__))
+        linux_received_dir = path.join(script_dir, "Linux_Received")
 
-    # Step 2: Write received data to a file
-    with open("Linux_Received.txt", "a", encoding="utf-8") as file:
-        file.write(decoded + "\n\n")
+        makedirs(linux_received_dir, exist_ok=True)
+        save_path = path.join(linux_received_dir, filename)
 
-    # Step 3: Copy the received data to the clipboard
-    copy(decoded)
+        with open(save_path, "wb") as f:
+            while True:
+                data = conn.recv(4096)
+                if not data:
+                    break
+                f.write(data)
 
-    print(f"[✓] Data Written to Linux_Received.txt and copied to clipboard.")
-    print(f':: Received Data: {decoded}')
+        print(f"[💾] File received from Linux and saved to {save_path}")
+
+    # Else Received data is a text(clipboard)
+    else:
+        # Step 0: Receive data from the Linux server
+        data = first_bytes + conn.recv(4096)
+
+        # Step 1: Decode the received data
+        decoded = data.decode("utf-8")
+
+        # Step 2: Write received data to a file
+        with open("Linux_Received.txt", "a", encoding="utf-8") as file:
+            file.write(decoded + "\n\n")
+
+        # Step 3: Copy the received data to the clipboard
+        copy(decoded)
+
+        print(f"[✓] Data Written to Linux_Received.txt and copied to clipboard.")
+        print(f':: Received Data: {decoded}')
 
     # Step 4: Close Connection
     conn.close()
