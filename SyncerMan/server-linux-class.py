@@ -287,6 +287,7 @@ class HotkeyManager:
             self.reset_hotkeys()
 
     def safe_send_directory_to_windows(self):
+        print("[📁] Directory Sending Triggered: \n")
         self.release_keys('ctrl', 'shift', 'd')
         keyboard.unhook_all_hotkeys()
         try:
