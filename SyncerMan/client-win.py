@@ -205,9 +205,11 @@ def send_directory_to_linux():
             print(f"[✓] Directory {basename} sent as archive to Linux Server.")
 
         except Exception as e:
-            print(f"[!] Could not send directory({dir_path}) to Linux Server:\nError: {e}")
+            print(f"[!] Could not send directory({dir_path}) to Linux Server.!\nError: {e}")
             if path.exists(archive_path):
                 remove(archive_path)
+    else:
+        print(f"[!] {dir_path} is not a valid directory!.\n")
 
 
 
