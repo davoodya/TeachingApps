@@ -244,6 +244,7 @@ def main():
     print("[⌨] Hotkeys:")
     print("  - CTRL+SHIFT+V: Send Clipboard to Windows")
     print("  - CTRL+SHIFT+U: Send Text to Windows")
+    print("  - CTRL+SHIFT+F: Send Files to Windows")
 
     """ Section 12: Start Server Receiver using Multithreading  """
     Thread(target=start_receive_server, daemon=True).start()
