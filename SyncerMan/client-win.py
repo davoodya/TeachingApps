@@ -86,6 +86,7 @@ def handle_client_connection(conn, addr):
         filename = filename.decode().strip()
 
         # get the current directory for create "Linux_Received" directory in there
+        #current_dir = os.getcwd()
         script_dir = path.dirname(path.abspath(__file__))
         linux_received_dir = path.join(script_dir, "Linux_Received")
 
