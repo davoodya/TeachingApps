@@ -155,31 +155,13 @@ def send_files_to_linux():
         except Exception as e:
             print(f"[!] Failed to send {file_path}: {e}")
 
-def send_directory_to_linux():
+
+def select_directory():
     # Step 1: Open a file dialog to select the directory
     root = tk.Tk()
     root.withdraw()
     dir_path = filedialog.askdirectory(title="Select Directory for Sending to Linux")
-
-    if dir_path and path.isdir(dir_path):
-        archive_path = ''
-        try:
-            # Step 1: Create a zip archive of the directory
-            basename = path.basename(dir_path)
-            archive_path = f"/tmp/{basename}_archive.zip"
-            make_archive(archive_path.replace(".zip", ""), 'zip', dir_path)
-
-            # Step 2: Send the zip archive to the Linux server
-            send_file_to_linux(archive_path)
-
-            # Step 3: Remove the temporary zip archive
-            remove(archive_path)
-            print(f"[✓] Directory {basename} sent as archive to Linux Server.")
-
-        except Exception as e:
-            print(f"[!] Could not send directory({dir_path}) to Linux Server:\nError: {e}")
-            if path.exists(archive_path):
-                remove(archive_path)
+    return dir_path
 
 def send_file_to_linux(file_path):
     try:
@@ -203,6 +185,31 @@ def send_file_to_linux(file_path):
         print(f"[✓] File {filename} sent to Linux Server.")
     except Exception as e:
         print(f"[!] Could not send file({filename}) to Linux Server.!\nError: {e}")
+
+def send_directory_to_linux():
+    # Step 1: Get the directory path
+    dir_path = select_directory()
+    if dir_path and path.isdir(dir_path):
+        archive_path = ''
+        try:
+            # Step 1: Create a zip archive of the directory
+            basename = path.basename(dir_path)
+            archive_path = f"/tmp/{basename}_archive.zip"
+            make_archive(archive_path.replace(".zip", ""), 'zip', dir_path)
+
+            # Step 2: Send the zip archive to the Linux server
+            send_file_to_linux(archive_path)
+
+            # Step 3: Remove the temporary zip archive
+            remove(archive_path)
+            print(f"[✓] Directory {basename} sent as archive to Linux Server.")
+
+        except Exception as e:
+            print(f"[!] Could not send directory({dir_path}) to Linux Server:\nError: {e}")
+            if path.exists(archive_path):
+                remove(archive_path)
+
+
 
 
 
