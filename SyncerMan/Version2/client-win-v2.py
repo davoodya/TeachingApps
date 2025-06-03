@@ -14,11 +14,16 @@ last_clipboard = ""
 
 """ Section 1: Define Sender Class """
 class Sender:
-    def send_clipboard(self, text="1"):
+    def send_clipboard(self):
         global last_clipboard
+
         # Step 1: Get clipboard data if not argument is passed
-        if text == "1":
-            text = paste()
+        text = paste()
+
+        # Step 2: Check if clipboard is empty don't send it
+        if not data.strip():
+            print("[!] Clipboard is empty. Nothing to send.")
+            return
 
         if text != last_clipboard:
             try:
@@ -26,11 +31,8 @@ class Sender:
                     sock.connect((SERVER_IP, SERVER_PORT))
                     sock.sendall(text.encode("utf-8"))
 
-                if text == paste():
-                    print("[✓] Sent clipboard to Linux.")
-                    last_clipboard = text
-                else:
-                    print(f"[✓] Sent {text} to Linux.")
+                print(f"\n[✓] Sent clipboard({text}) to Linux.")
+                last_clipboard = text
 
             except Exception as e:
                 print(f"[✗] Error sending clipboard to Linux: {e}")
