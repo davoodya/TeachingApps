@@ -124,37 +124,6 @@ def handle_client_connection(conn, addr):
     # Step 4: Close Connection
     conn.close()
 
-def send_files_to_linux():
-    # Step 1: Open a file dialog to select files
-    root = tk.Tk()
-    root.withdraw()
-    file_paths = filedialog.askopenfilenames(title="Select Files for Sending to Linux")
-
-    # Step 2: Send the selected files to the Linux server
-    for file_path in file_paths:
-        try:
-            # Step 2.1: Open and read the file
-            with open(file_path, 'rb') as file:
-                file_data = file.read()
-
-            # Step 2.2: Get file name
-            file_name = path.basename(file_path)
-
-            # Step 2.3: Create a socket and Connect to the Linux server
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((SERVER_IP, SERVER_PORT))
-
-            # Step 2.4: Send the file signal + file name and file data
-            sock.sendall(b"FILE\n")
-            sock.sendall(f"{file_name}\n".encode())
-            sock.sendall(file_data)
-            # Step 2.5: Close the socket
-            sock.close()
-            print(f"[✓] Sent {file_name} to Linux.")
-
-        except Exception as e:
-            print(f"[!] Failed to send {file_path}: {e}")
-
 def select_directory():
     # Step 1: Open a file dialog to select the directory
     root = tk.Tk()
@@ -217,7 +186,7 @@ def select_files():
     file_paths = filedialog.askopenfilenames(title="Select Files for Sending to Linux")
     return file_paths
 
-def send_files_to_linux_oop():
+def send_files_to_linux():
     # Step 1: Open a file dialog to select files
     file_paths = select_files()
 
@@ -232,8 +201,6 @@ def send_files_to_linux_oop():
     else:
         print(f"[!] No files selected!.\n")
 
-# keyboard.add_hotkey('ctrl+alt+c', send_clipboard)
-# keyboard.add_hotkey('ctrl+alt+y', lambda: send_text(send_clipboard))
 
 """ Section 8: Add Hotkeys Class """
 class HotkeyManager:
@@ -313,7 +280,7 @@ class HotkeyManager:
     def safe_send_files(self):
         print("[🗃️] Files Sending Triggered: \n")
         self.release_keys('ctrl', 'alt', 'f')
-        send_files_to_linux_oop()
+        send_files_to_linux()
 
     def safe_send_directory(self):
         print("[📁] Directory Sending Triggered: \n")
