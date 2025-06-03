@@ -155,7 +155,7 @@ class Receiver:
         while True:
             conn, addr = server.accept()
             #print(f"[🔗] Connection established from {addr}")
-            Thread(target=handle_client_connection, args=(conn, addr)).start()
+            Thread(target=self.handle_client_connection, args=(conn, addr)).start()
 
     def handle_client_connection(self,conn, addr):
         first_bytes = conn.recv(5)
@@ -205,7 +205,6 @@ class Receiver:
         conn.close()
 
 
-
 """ Section 8: Add Hotkeys Class """
 class HotkeyManager:
     def __init__(self):
@@ -245,7 +244,6 @@ class HotkeyManager:
                 pass
         # 2. Clear the list of registered hotkeys
         self.registered_ids.clear()
-
 
     def _listener_thread(self):
         """ Main Thread for keeping the program running """
@@ -302,7 +300,8 @@ def main():
     print("  - CTRL+ALT+D: Send Directory to Linux")
 
     # Listening to clipboard from Linux
-    Thread(target=receive_from_linux, daemon=True).start()
+    receiver = Receiver()
+    Thread(target=receiver.receive_from_linux, daemon=True).start()
 
     # Start Hotkey Manager
     manager = HotkeyManager()
@@ -323,14 +322,6 @@ def main():
     finally:
         manager.reset_hotkeys()
         manager.stop()
-
-    # try:
-    #     while True:
-    #         sleep(1)
-    # except KeyboardInterrupt:
-    #     print("\n[✗] Exiting...")
-    #     manager.stop()
-
 
 if __name__ == "__main__":
     main()
