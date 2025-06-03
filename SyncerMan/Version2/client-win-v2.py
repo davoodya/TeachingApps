@@ -293,11 +293,19 @@ class HotkeyManager:
 def main():
     global manager
     """ Main Function """
-    print("[⌨] Hotkeys:")
-    print("  - CTRL+ALT+C: Send Clipboard to Linux")
-    print("  - CTRL+ALT+Y: Send Text to Linux")
-    print("  - CTRL+ALT+F: Send Files to Linux")
-    print("  - CTRL+ALT+D: Send Directory to Linux")
+    print("""[⌨] Hotkeys:
+      - CTRL+ALT+C: Send Clipboard to Linux
+      - CTRL+ALT+Y: Send Text to Linux
+      - CTRL+ALT+F: Send Files to Linux
+      - CTRL+ALT+D: Send Directory to Linux
+      
+    """)
+
+    # print("[⌨] Hotkeys:")
+    # print("  - CTRL+ALT+C: Send Clipboard to Linux")
+    # print("  - CTRL+ALT+Y: Send Text to Linux")
+    # print("  - CTRL+ALT+F: Send Files to Linux")
+    # print("  - CTRL+ALT+D: Send Directory to Linux")
 
     # Listening to clipboard from Linux
     receiver = Receiver()
