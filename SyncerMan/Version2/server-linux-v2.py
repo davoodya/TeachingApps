@@ -313,6 +313,7 @@ def main():
       - CTRL+SHIFT+F2: Send Text to Linux
       - CTRL+SHIFT+F3: Send Files to Linux
       - CTRL+SHIFT+F4: Send Directory to Linux
+      - CTRL+C: Goodbye, Shutdown Server Side.
       
     """)
 

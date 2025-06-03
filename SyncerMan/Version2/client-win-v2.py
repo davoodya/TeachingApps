@@ -301,6 +301,7 @@ def main():
       - CTRL+F2: Send Text to Linux
       - CTRL+F3: Send Files to Linux
       - CTRL+F4: Send Directory to Linux
+      - CTRL+C: Goodbye, Shutdown Client Side.
       
     """)
 
