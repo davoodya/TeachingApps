@@ -272,23 +272,23 @@ class HotkeyManager:
         self.release_keys('ctrl', 'alt', 'y')
         keyboard.unhook_all_hotkeys()
         try:
-            send_text_to_linux()
+            self.sender.send_text_to_linux()
         finally:
             self.start()
 
     def safe_send_clipboard(self):
         self.release_keys('ctrl', 'alt', 'c')
-        send_clipboard()
+        self.sender.send_clipboard()
 
     def safe_send_files(self):
         print("[🗃️] Files Sending Triggered: \n")
         self.release_keys('ctrl', 'alt', 'f')
-        send_files_to_linux()
+        self.sender.send_files_to_linux()
 
     def safe_send_directory(self):
         print("[📁] Directory Sending Triggered: \n")
         self.release_keys('ctrl', 'alt', 'd')
-        send_directory_to_linux()
+        self.sender.send_directory_to_linux()
 
 def main():
     global manager
