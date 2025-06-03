@@ -186,7 +186,6 @@ def send_directory_to_windows():
     else:
         print(f"[!] {dir_path} is not a valid directory!.\n")
 
-
 def select_files():
     root = tk.Tk()
     root.withdraw()
@@ -211,10 +210,10 @@ class HotkeyManager:
     def __init__(self):
         self.exit_event = Event()
         self.hotkeys = [
-            ('ctrl+shift+v', self.safe_send_clipboard),
-            ('ctrl+shift+y', self.safe_send_text),
-            ('ctrl+shift+f', self.safe_send_file_to_windows),
-            ('ctrl+shift+d', self.safe_send_directory_to_windows)
+            ('ctrl+shift+f1', self.safe_send_clipboard),
+            ('ctrl+shift+f2', self.safe_send_text),
+            ('ctrl+shift+f3', self.safe_send_file_to_windows),
+            ('ctrl+shift+f4', self.safe_send_directory_to_windows)
         ]
         self.registered_ids = []
 
@@ -258,11 +257,11 @@ class HotkeyManager:
         self._cleanup()
 
     def safe_send_clipboard(self):
-        self.release_keys('ctrl', 'shift', 'v')
+        self.release_keys('ctrl', 'shift', 'f1')
         send_clipboard_to_windows()
 
     def safe_send_text(self):
-        self.release_keys('ctrl', 'shift', 'u')
+        self.release_keys('ctrl', 'shift', 'f2')
         keyboard.unhook_all_hotkeys()
         try:
             send_text_to_windows()
@@ -271,7 +270,7 @@ class HotkeyManager:
 
     def safe_send_file_to_windows(self):
         print("[🗃️] Files Sending Triggered: \n")
-        self.release_keys('ctrl', 'shift', 'f')
+        self.release_keys('ctrl', 'shift', 'f3')
         keyboard.unhook_all_hotkeys()
         try:
             send_files_to_windows()
@@ -280,7 +279,7 @@ class HotkeyManager:
 
     def safe_send_directory_to_windows(self):
         print("[📁] Directory Sending Triggered: \n")
-        self.release_keys('ctrl', 'shift', 'd')
+        self.release_keys('ctrl', 'shift', 'f4')
         keyboard.unhook_all_hotkeys()
         try:
             send_directory_to_windows()
@@ -305,10 +304,10 @@ class HotkeyManager:
 def main():
     global manager
     print("[⌨] Hotkeys:")
-    print("  - CTRL+SHIFT+V: Send Clipboard to Windows")
-    print("  - CTRL+SHIFT+U: Send Text to Windows")
-    print("  - CTRL+SHIFT+F: Send Files to Windows")
-    print("  - CTRL+SHIFT+D: Send Directory to Windows")
+    print("  - CTRL+SHIFT+F1: Send Clipboard to Windows")
+    print("  - CTRL+SHIFT+F2: Send Text to Windows")
+    print("  - CTRL+SHIFT+F3: Send Files to Windows")
+    print("  - CTRL+SHIFT+F4: Send Directory to Windows")
 
     """ Section 12: Start Server Receiver using Multithreading  """
     Thread(target=start_receive_server, daemon=True).start()
