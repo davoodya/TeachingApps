@@ -52,7 +52,7 @@ def handle_client(conn, addr):
         except Exception as e:
             decoded = f"[✗] Could not decode clipboard content. Error: {e}"
 
-        print(f'[⇧] Received from Windows: {decoded}')
+
 
         # Step 2: Write received data to a file
         with open("PC_Received.txt", "a", encoding="utf-8") as file:
@@ -61,6 +61,7 @@ def handle_client(conn, addr):
         # Step 3: Copy the received data to the clipboard
         copy(decoded)
         print("[✓] Data written to PC_Received.txt and copied to clipboard.")
+        print(f'[⇧] Data Received from Windows: {decoded}')
 
 
     # End Step: Close Connection
