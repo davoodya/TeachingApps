@@ -12,7 +12,8 @@ from settings_v2 import WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
 
-""" Section 2: Define Receiver Class """
+
+""" Section 1: Define Receiver Class """
 class Receiver:
     def handle_client(self, conn, addr):
         """ this function handling received data from the Windows client """
@@ -81,7 +82,7 @@ class Receiver:
             conn, addr = server.accept()
             Thread(target=self.handle_client, args=(conn, addr)).start()
 
-""" Section 3: Define Sender Class """
+""" Section 2: Define Sender Class """
 class Sender:
     """ this function sends clipboard data from linux server to the Windows client """
     def send_clipboard_to_windows(self):
@@ -207,7 +208,7 @@ class Sender:
             print(f"[!] No files selected!.\n")
 
 
-""" Section 4: Add Hotkeys Class """
+""" Section 3: Add Hotkeys Class """
 class HotkeyManager:
     def __init__(self):
         self.exit_event = Event()
@@ -303,7 +304,7 @@ class HotkeyManager:
             except:
                 pass
 
-""" Section 5: Define main function """
+""" Section 4: Define main function """
 def main():
     global manager
     print("""[⌨] Hotkeys:
@@ -315,7 +316,7 @@ def main():
       
     """)
 
-    """ Start Server Receiver using Multithreading  """
+    # Start Server Receiver using Multithreading
     receiver = Receiver()
     Thread(target=receiver.start_receive_server, daemon=True).start()
 
