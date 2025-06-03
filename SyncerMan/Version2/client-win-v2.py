@@ -21,7 +21,7 @@ class Sender:
         text = paste()
 
         # Step 2: Check if clipboard is empty don't send it
-        if not data.strip():
+        if not text.strip():
             print("[!] Clipboard is empty. Nothing to send.")
             return
 
