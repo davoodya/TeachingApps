@@ -12,9 +12,7 @@ from settings_v2 import SERVER_IP, SERVER_PORT, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
 
-""" Section 1: Define App Functions """
-
-""" Section 2: Define Sender Class """
+""" Section 1: Define Sender Class """
 class Sender:
     def send_clipboard(self, text="1"):
         global last_clipboard
@@ -139,7 +137,7 @@ class Sender:
             print(f"[!] No files selected!.\n")
 
 
-""" Section 3: Define Receiver Class """
+""" Section 2: Define Receiver Class """
 class Receiver:
     def receive_from_linux(self):
         # Step 1: Create a socket
@@ -205,7 +203,7 @@ class Receiver:
         conn.close()
 
 
-""" Section 8: Add Hotkeys Class """
+""" Section 3: Add Hotkeys Class """
 class HotkeyManager:
     def __init__(self):
         self.exit_event = Event()
@@ -291,6 +289,8 @@ class HotkeyManager:
         self.release_keys('ctrl', 'f4')
         self.sender.send_directory_to_linux()
 
+
+""" Section 4: Define Main Function """
 def main():
     global manager
     """ Main Function """
