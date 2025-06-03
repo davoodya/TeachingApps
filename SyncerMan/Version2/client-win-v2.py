@@ -152,7 +152,6 @@ class Receiver:
         # Step 3: Accept incoming connections
         while True:
             conn, addr = server.accept()
-            #print(f"[🔗] Connection established from {addr}")
             Thread(target=self.handle_client_connection, args=(conn, addr)).start()
 
     def handle_client_connection(self,conn, addr):
@@ -295,6 +294,7 @@ def main():
     global manager
     """ Main Function """
     print("""[⌨] Hotkeys:
+      ------------------------------------
       - CTRL+F1: Send Clipboard to Linux
       - CTRL+F2: Send Text to Linux
       - CTRL+F3: Send Files to Linux
