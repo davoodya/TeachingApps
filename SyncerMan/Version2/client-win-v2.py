@@ -210,10 +210,10 @@ class HotkeyManager:
     def __init__(self):
         self.exit_event = Event()
         self.hotkeys = [
-            ('ctrl+alt+c', self.safe_send_clipboard),
-            ('ctrl+alt+y', self.safe_send_text),
-            ('ctrl+alt+f', self.safe_send_files),
-            ('ctrl+alt+d', self.safe_send_directory)
+            ('ctrl+f1', self.safe_send_clipboard),
+            ('ctrl+f2', self.safe_send_text),
+            ('ctrl+f3', self.safe_send_files),
+            ('ctrl+f4', self.safe_send_directory)
         ]
         self.registered_ids = []
         self.sender = Sender()
@@ -268,36 +268,37 @@ class HotkeyManager:
             manager.stop()
             manager.start()
 
+    def safe_send_clipboard(self):
+        self.release_keys('ctrl', 'f1')
+        self.sender.send_clipboard()
+
     def safe_send_text(self):
-        self.release_keys('ctrl', 'alt', 'y')
+        self.release_keys('ctrl', 'f2')
         keyboard.unhook_all_hotkeys()
         try:
             self.sender.send_text_to_linux()
         finally:
             self.start()
 
-    def safe_send_clipboard(self):
-        self.release_keys('ctrl', 'alt', 'c')
-        self.sender.send_clipboard()
 
     def safe_send_files(self):
         print("[🗃️] Files Sending Triggered: \n")
-        self.release_keys('ctrl', 'alt', 'f')
+        self.release_keys('ctrl', 'f3')
         self.sender.send_files_to_linux()
 
     def safe_send_directory(self):
         print("[📁] Directory Sending Triggered: \n")
-        self.release_keys('ctrl', 'alt', 'd')
+        self.release_keys('ctrl', 'f4')
         self.sender.send_directory_to_linux()
 
 def main():
     global manager
     """ Main Function """
     print("""[⌨] Hotkeys:
-      - CTRL+ALT+C: Send Clipboard to Linux
-      - CTRL+ALT+Y: Send Text to Linux
-      - CTRL+ALT+F: Send Files to Linux
-      - CTRL+ALT+D: Send Directory to Linux
+      - CTRL+F1: Send Clipboard to Linux
+      - CTRL+F2: Send Text to Linux
+      - CTRL+F3: Send Files to Linux
+      - CTRL+F4: Send Directory to Linux
       
     """)
 
