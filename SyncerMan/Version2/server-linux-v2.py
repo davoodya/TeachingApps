@@ -306,11 +306,14 @@ class HotkeyManager:
 """ Section 5: Define main function """
 def main():
     global manager
-    print("[⌨] Hotkeys:")
-    print("  - CTRL+SHIFT+F1: Send Clipboard to Windows")
-    print("  - CTRL+SHIFT+F2: Send Text to Windows")
-    print("  - CTRL+SHIFT+F3: Send Files to Windows")
-    print("  - CTRL+SHIFT+F4: Send Directory to Windows")
+    print("""[⌨] Hotkeys:
+      ------------------------------------
+      - CTRL+SHIFT+F1: Send Clipboard to Linux
+      - CTRL+SHIFT+F2: Send Text to Linux
+      - CTRL+SHIFT+F3: Send Files to Linux
+      - CTRL+SHIFT+F4: Send Directory to Linux
+      
+    """)
 
     """ Start Server Receiver using Multithreading  """
     receiver = Receiver()
