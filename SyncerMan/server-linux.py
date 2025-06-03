@@ -225,7 +225,7 @@ def send_files_to_windows_oop():
         for file_path in file_paths:
             if path.isfile(file_path):
                 send_file_to_windows(file_path)
-                sleep(0.5)
+                sleep(0.5) # Prevent High CPU Usage
             else:
                 print(f"[!] {file_path} is not a valid file!.\n")
     else:

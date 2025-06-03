@@ -1,5 +1,4 @@
 import socket
-from idlelib.browser import file_open
 from threading import Thread, Event
 from time import sleep
 import keyboard
@@ -156,7 +155,6 @@ def send_files_to_linux():
         except Exception as e:
             print(f"[!] Failed to send {file_path}: {e}")
 
-
 def select_directory():
     # Step 1: Open a file dialog to select the directory
     root = tk.Tk()
@@ -233,7 +231,6 @@ def send_files_to_linux_oop():
                 print(f"[!] {file_path} is not a valid file!.\n")
     else:
         print(f"[!] No files selected!.\n")
-
 
 # keyboard.add_hotkey('ctrl+alt+c', send_clipboard)
 # keyboard.add_hotkey('ctrl+alt+y', lambda: send_text(send_clipboard))
