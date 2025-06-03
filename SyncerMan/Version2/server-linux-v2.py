@@ -11,7 +11,7 @@ from settings_v2 import WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
 
-""" Section 3: Handle the received Data from Windows Client """
+
 def handle_client(conn, addr):
     """ this function handling received data from the Windows client """
     first_bytes = conn.recv(5)
@@ -67,7 +67,7 @@ def handle_client(conn, addr):
     # End Step: Close Connection
     conn.close()
 
-""" Section 2: Start Listening to the Windows Client """
+
 def start_receive_server(port=65432):
     """ this function start listening to the Windows client on port=65432 """
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -80,7 +80,7 @@ def start_receive_server(port=65432):
         Thread(target=handle_client, args=(conn, addr)).start()
 
 
-""" Section 4: Send Clipboard to Windows Client """
+
 def send_clipboard_to_windows(data="1"):
     global last_clipboard
     """ this function sends clipboard data from linux server to the Windows client """
@@ -108,7 +108,7 @@ def send_clipboard_to_windows(data="1"):
     else:
         print("[✓] Clipboard Unchanged, not sent.")
 
-""" Section 10: Define send_text Callback function for sending input texts to windows"""
+
 def send_text_to_windows():
     manager.release_keys('ctrl', 'shift', 'u')
     keyboard.unhook_all_hotkeys()
