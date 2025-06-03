@@ -107,16 +107,18 @@ class Sender:
             print("[✓] Clipboard Unchanged, not sent.")
 
     def send_text_to_windows(self):
-        manager.release_keys('ctrl', 'shift', 'f2')
-        keyboard.unhook_all_hotkeys()
+        #manager.release_keys('ctrl', 'shift', 'f2')
+        #keyboard.unhook_all_hotkeys()
         try:
             data = input("enter text(sending to Windows): ")
             if data.strip():  # if a text is empty
                 self.send_text_directly(data)
             else:
                 print("[!] No text entered.")
-        finally:
-            manager.reset_hotkeys()
+        except Exception as e:
+            print(f"[x] Error when sending text to Windows |\nError: {e}")
+        # finally:
+        #     manager.reset_hotkeys()
 
     def send_text_directly(self,data):
         try:
@@ -213,6 +215,7 @@ class HotkeyManager:
             ('ctrl+shift+f4', self.safe_send_directory_to_windows)
         ]
         self.registered_ids = []
+        self.sender = Sender()
 
 
     def start(self):
@@ -255,13 +258,13 @@ class HotkeyManager:
 
     def safe_send_clipboard(self):
         self.release_keys('ctrl', 'shift', 'f1')
-        send_clipboard_to_windows()
+        self.sender.send_clipboard_to_windows()
 
     def safe_send_text(self):
         self.release_keys('ctrl', 'shift', 'f2')
         keyboard.unhook_all_hotkeys()
         try:
-            send_text_to_windows()
+            self.sender.send_text_to_windows()
         finally:
             self.reset_hotkeys()
 
@@ -270,7 +273,7 @@ class HotkeyManager:
         self.release_keys('ctrl', 'shift', 'f3')
         keyboard.unhook_all_hotkeys()
         try:
-            send_files_to_windows()
+            self.sender.send_files_to_windows()
         finally:
             self.reset_hotkeys()
 
@@ -279,7 +282,7 @@ class HotkeyManager:
         self.release_keys('ctrl', 'shift', 'f4')
         keyboard.unhook_all_hotkeys()
         try:
-            send_directory_to_windows()
+            self.sender.send_directory_to_windows()
         finally:
             self.reset_hotkeys()
 
