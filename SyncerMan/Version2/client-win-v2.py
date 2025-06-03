@@ -13,18 +13,6 @@ from settings_v2 import SERVER_IP, SERVER_PORT, CLIENT_RECEIVE_PORT
 last_clipboard = ""
 
 """ Section 1: Define App Functions """
-def select_files():
-    root = tk.Tk()
-    root.withdraw()
-    file_paths = filedialog.askopenfilenames(title="Select Files for Sending to Linux")
-    return file_paths
-
-def select_directory():
-    # Step 1: Open a file dialog to select the directory
-    root = tk.Tk()
-    root.withdraw()
-    dir_path = filedialog.askdirectory(title="Select Directory for Sending to Linux")
-    return dir_path
 
 """ Section 2: Define Sender Class """
 class Sender:
@@ -74,6 +62,19 @@ class Sender:
             print(f"[✗] Could not send({text}) to Linux: {e}")
             manager.reset_hotkeys()
 
+    def select_files(self):
+        root = tk.Tk()
+        root.withdraw()
+        file_paths = filedialog.askopenfilenames(title="Select Files for Sending to Linux")
+        return file_paths
+
+    def select_directory(self):
+        # Step 1: Open a file dialog to select the directory
+        root = tk.Tk()
+        root.withdraw()
+        dir_path = filedialog.askdirectory(title="Select Directory for Sending to Linux")
+        return dir_path
+
     def send_file_to_linux(self, file_path):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -99,7 +100,7 @@ class Sender:
 
     def send_directory_to_linux(self):
         # Step 1: Get the directory path
-        dir_path = select_directory()
+        dir_path = self.select_directory()
         if dir_path and path.isdir(dir_path):
             archive_path = ''
             try:
@@ -124,7 +125,7 @@ class Sender:
 
     def send_files_to_linux(self):
         # Step 1: Open a file dialog to select files
-        file_paths = select_files()
+        file_paths = self.select_files()
 
         if file_paths:
             # Step 2: Send the selected files to the Linux server
@@ -136,6 +137,7 @@ class Sender:
                     print(f"[!] {file_path} is not a valid file!.\n")
         else:
             print(f"[!] No files selected!.\n")
+
 
 """ Section 3: Define Receiver Class """
 class Receiver:
