@@ -7,7 +7,7 @@ import tkinter as tk
 from tkinter import filedialog # used for asking files for sending to linux server
 from os import path, makedirs, remove
 from shutil import make_archive
-from settings import SERVER_IP, SERVER_PORT, CLIENT_RECEIVE_PORT
+from settings_v2 import SERVER_IP, SERVER_PORT, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
 

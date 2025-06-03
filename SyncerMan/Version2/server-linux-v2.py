@@ -7,7 +7,7 @@ from os import path, makedirs, remove
 import tkinter as tk
 from tkinter import filedialog
 from shutil import make_archive
-from settings import WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT
+from settings_v2 import WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
 
