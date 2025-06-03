@@ -11,199 +11,195 @@ from settings_v2 import WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
 
+class Receiver:
+    def handle_client(self, conn, addr):
+        """ this function handling received data from the Windows client """
+        first_bytes = conn.recv(5)
 
-def handle_client(conn, addr):
-    """ this function handling received data from the Windows client """
-    first_bytes = conn.recv(5)
+        # if receive a file signal from Windows
+        if first_bytes == b"FILE\n":
+            # Step 1: get file name
+            filename = b""
+            while not filename.endswith(b"\n"):
+                filename += conn.recv(1)
+            filename = filename.decode().strip()
 
-    # if receive a file signal from Windows
-    if first_bytes == b"FILE\n":
-        # Step 1: get file name
-        filename = b""
-        while not filename.endswith(b"\n"):
-            filename += conn.recv(1)
-        filename = filename.decode().strip()
+            # Step 2: get the current path of the script to create "WIN_Received" directory in there
+            #current_dir = os.getcwd()
+            script_dir = path.dirname(path.abspath(__file__))
+            windows_received_dir = path.join(script_dir, "WIN_Received")
 
-        # Step 2: get the current path of the script to create "WIN_Received" directory in there
-        #current_dir = os.getcwd()
-        script_dir = path.dirname(path.abspath(__file__))
-        windows_received_dir = path.join(script_dir, "WIN_Received")
+            makedirs(windows_received_dir, exist_ok=True)
+            save_path = path.join(windows_received_dir, filename)
 
-        makedirs(windows_received_dir, exist_ok=True)
-        save_path = path.join(windows_received_dir, filename)
+            # Step 3: Save file into disk
+            with open(save_path, "wb") as f:
+                while True:
+                    data = conn.recv(4096)
+                    if not data:
+                        break
+                    f.write(data)
+            print(f"[💾] File received from Windows and saved to {save_path}")
 
-        # Step 3: Save file into disk
-        with open(save_path, "wb") as f:
-            while True:
-                data = conn.recv(4096)
-                if not data:
-                    break
-                f.write(data)
-        print(f"[💾] File received from Windows and saved to {save_path}")
+        # else, receive clipboard content
+        else:
+            # Step 0: Receive data from the Windows client
+            data = first_bytes + conn.recv(4096)
 
-    # else, receive clipboard content
-    else:
-        # Step 0: Receive data from the Windows client
-        data = first_bytes + conn.recv(4096)
-
-        # Step 1: Decode the received data
-        try:
-            decoded = data.decode("utf-8")
-        except Exception as e:
-            decoded = f"[✗] Could not decode clipboard content. Error: {e}"
-
-
-
-        # Step 2: Write received data to a file
-        with open("PC_Received.txt", "a", encoding="utf-8") as file:
-            file.write(decoded + "\n\n")
-
-        # Step 3: Copy the received data to the clipboard
-        copy(decoded)
-        print("[✓] Data written to PC_Received.txt and copied to clipboard.")
-        print(f'[⇧] Data Received from Windows: {decoded}')
-
-
-    # End Step: Close Connection
-    conn.close()
-
-
-def start_receive_server(port=65432):
-    """ this function start listening to the Windows client on port=65432 """
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(("0.0.0.0", port))
-    server.listen(5)
-    print(f"[📡] Listening for Windows Clipboard on port: {port}")
-
-    while True:
-        conn, addr = server.accept()
-        Thread(target=handle_client, args=(conn, addr)).start()
+            # Step 1: Decode the received data
+            try:
+                decoded = data.decode("utf-8")
+            except Exception as e:
+                decoded = f"[✗] Could not decode clipboard content. Error: {e}"
 
 
 
-def send_clipboard_to_windows(data="1"):
-    global last_clipboard
+            # Step 2: Write received data to a file
+            with open("PC_Received.txt", "a", encoding="utf-8") as file:
+                file.write(decoded + "\n\n")
+
+            # Step 3: Copy the received data to the clipboard
+            copy(decoded)
+            print("[✓] Data written to PC_Received.txt and copied to clipboard.")
+            print(f'[⇧] Data Received from Windows: {decoded}')
+
+
+        # End Step: Close Connection
+        conn.close()
+
+
+    def start_receive_server(self, port=65432):
+        """ this function start listening to the Windows client on port=65432 """
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.bind(("0.0.0.0", port))
+        server.listen(5)
+        print(f"[📡] Listening for Windows Clipboard on port: {port}")
+
+        while True:
+            conn, addr = server.accept()
+            Thread(target=self.handle_client, args=(conn, addr)).start()
+
+class Sender:
     """ this function sends clipboard data from linux server to the Windows client """
-    # Step 1: Get clipboard data if not argument is passed
-    if data == "1":
+    def send_clipboard_to_windows(self):
+        global last_clipboard
+        # Step 1: Get clipboard data if not argument is passed
         data = paste()
 
-    # Step 2: Check if clipboard is empty don't send it
-    if not data.strip():
-        print("[!] Clipboard is empty. Nothing to send.")
-        return
+        # Step 2: Check if clipboard is empty don't send it
+        if not data.strip():
+            print("[!] Clipboard is empty. Nothing to send.")
+            return
 
-    # Step 3: Send clipboard data to the Windows client
-    if data != last_clipboard:
+        # Step 3: Send clipboard data to the Windows client
+        if data != last_clipboard:
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.connect((WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT))
+                    s.sendall(data.encode("utf-8"))
+
+                print(f"\n[✓] Sent clipboard({data}) to Windows.")
+                last_clipboard = data
+
+            except Exception as e:
+                print(f"[✗] Could not send to Windows: {e}")
+        else:
+            print("[✓] Clipboard Unchanged, not sent.")
+
+    def send_text_to_windows(self):
+        manager.release_keys('ctrl', 'shift', 'f2')
+        keyboard.unhook_all_hotkeys()
+        try:
+            data = input("enter text(sending to Windows): ")
+            if data.strip():  # if a text is empty
+                self.send_text_directly(data)
+            else:
+                print("[!] No text entered.")
+        finally:
+            manager.reset_hotkeys()
+
+    def send_text_directly(self,data):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.connect((WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT))
                 s.sendall(data.encode("utf-8"))
-
-            print(f"\n[✓] Sent clipboard({data}) to Windows.")
-            last_clipboard = data
-
+            print(f"[✓] Sent {data} to Windows.")
         except Exception as e:
             print(f"[✗] Could not send to Windows: {e}")
-    else:
-        print("[✓] Clipboard Unchanged, not sent.")
+            manager.reset_hotkeys()
 
+    def select_files(self):
+        root = tk.Tk()
+        root.withdraw()
+        file_paths = filedialog.askopenfilenames(title="Select Files for Sending to Windows")
+        return file_paths
 
-def send_text_to_windows():
-    manager.release_keys('ctrl', 'shift', 'u')
-    keyboard.unhook_all_hotkeys()
-    try:
-        data = input("enter text(sending to Windows): ")
-        if data.strip():  # if a text is empty
-            send_text_directly(data)
-        else:
-            print("[!] No text entered.")
-    finally:
-        manager.reset_hotkeys()
+    def select_directory(self):
+        root = tk.Tk()
+        root.withdraw()
+        dir_path = filedialog.askdirectory(title="Select Directory for Sending to Windows")
+        return dir_path
 
-def send_text_directly(data):
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT))
-            s.sendall(data.encode("utf-8"))
-        print(f"[✓] Sent {data} to Windows.")
-    except Exception as e:
-        print(f"[✗] Could not send to Windows: {e}")
-        manager.reset_hotkeys()
-
-
-def select_directory():
-    root = tk.Tk()
-    root.withdraw()
-    dir_path = filedialog.askdirectory(title="Select Directory for Sending to Windows")
-    return dir_path
-
-def send_file_to_windows(file_path):
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            # Connect to the Linux server and send the file signal
-            sock.connect((WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT))
-            sock.sendall(b"FILE\n")
-
-            # get the filename and send it to the linux server
-            filename = path.basename(file_path)
-            sock.sendall(f"{filename}\n".encode())
-
-            # send file data to the linux server
-            with open(file_path, 'rb') as f:
-                while True:
-                    data = f.read(4096)
-                    if not data:
-                        break
-                    sock.sendall(data)
-        print(f"[✓] File {filename} sent to Windows Client.")
-
-    except Exception as e:
-        print(f"[!] Could not send file({filename}) to Windows Client.!\nError: {e}")
-
-def send_directory_to_windows():
-    # Step 1: Get the directory path
-    dir_path = select_directory()
-    # if dir_path entered and it is a directory
-    if dir_path and path.isdir(dir_path):
-        archive_path = ''
+    def send_file_to_windows(self,file_path):
         try:
-            # Step 2: Create a zip archive of the directory
-            basename = path.basename(dir_path)
-            archive_path = f"/tmp/{basename}_archive.zip"
-            make_archive(archive_path.replace('.zip', ''), 'zip', dir_path)
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                # Connect to the Linux server and send the file signal
+                sock.connect((WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT))
+                sock.sendall(b"FILE\n")
 
-            # Step 3: send the zip file to windows
-            send_file_to_windows(archive_path)
+                # get the filename and send it to the linux server
+                filename = path.basename(file_path)
+                sock.sendall(f"{filename}\n".encode())
 
-            # Step 4: Remove the temporary zip file
-            remove(archive_path)
-            print(f"[✓] Directory {basename} sent as archive to Windows Client.")
+                # send file data to the linux server
+                with open(file_path, 'rb') as f:
+                    while True:
+                        data = f.read(4096)
+                        if not data:
+                            break
+                        sock.sendall(data)
+            print(f"[✓] File {filename} sent to Windows Client.")
 
         except Exception as e:
-            print(f"[!] Could not send directory({dir_path}) to Windows Client.!\nError: {e}")
-            if path.exists(archive_path):
+            print(f"[!] Could not send file({filename}) to Windows Client.!\nError: {e}")
+
+    def send_directory_to_windows(self):
+        # Step 1: Get the directory path
+        dir_path = self.select_directory()
+        # if dir_path entered and it is a directory
+        if dir_path and path.isdir(dir_path):
+            archive_path = ''
+            try:
+                # Step 2: Create a zip archive of the directory
+                basename = path.basename(dir_path)
+                archive_path = f"/tmp/{basename}_archive.zip"
+                make_archive(archive_path.replace('.zip', ''), 'zip', dir_path)
+
+                # Step 3: send the zip file to windows
+                self.send_file_to_windows(archive_path)
+
+                # Step 4: Remove the temporary zip file
                 remove(archive_path)
-    else:
-        print(f"[!] {dir_path} is not a valid directory!.\n")
+                print(f"[✓] Directory {basename} sent as archive to Windows Client.")
 
-def select_files():
-    root = tk.Tk()
-    root.withdraw()
-    file_paths = filedialog.askopenfilenames(title="Select Files for Sending to Windows")
-    return file_paths
+            except Exception as e:
+                print(f"[!] Could not send directory({dir_path}) to Windows Client.!\nError: {e}")
+                if path.exists(archive_path):
+                    remove(archive_path)
+        else:
+            print(f"[!] {dir_path} is not a valid directory!.\n")
 
-def send_files_to_windows():
-    file_paths = select_files()
-    if file_paths:
-        for file_path in file_paths:
-            if path.isfile(file_path):
-                send_file_to_windows(file_path)
-                sleep(0.5) # Prevent High CPU Usage
-            else:
-                print(f"[!] {file_path} is not a valid file!.\n")
-    else:
-        print(f"[!] No files selected!.\n")
+    def send_files_to_windows(self):
+        file_paths = self.select_files()
+        if file_paths:
+            for file_path in file_paths:
+                if path.isfile(file_path):
+                    self.send_file_to_windows(file_path)
+                    sleep(0.5) # Prevent High CPU Usage
+                else:
+                    print(f"[!] {file_path} is not a valid file!.\n")
+        else:
+            print(f"[!] No files selected!.\n")
 
 
 """ Section 8: Add Hotkeys Class """
@@ -311,7 +307,8 @@ def main():
     print("  - CTRL+SHIFT+F4: Send Directory to Windows")
 
     """ Section 12: Start Server Receiver using Multithreading  """
-    Thread(target=start_receive_server, daemon=True).start()
+    receiver = Receiver()
+    Thread(target=receiver.start_receive_server, daemon=True).start()
 
     manager = HotkeyManager()
     manager.start()
