@@ -1,14 +1,22 @@
 import argparse
 import sys
 from ast import parse
+from email.policy import default
 
 DEFAULT_IP = '127.0.0.1'
 DEFAULT_PORT = 65432
+class UrlSchemaRemover(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        if values.startswith('http://'):
+            setattr(namespace, self.dest, values.replace('http://', ''))
+        elif values.startswith('https://'):
+            setattr(namespace, self.dest, values.replace('https://', ''))
+        else:
+            setattr(namespace, self.dest, values)
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(usage="👋🏼server.py [-i, --ip] IP [-p, --port] PORT",
-                                     description="🛜 SyncerMan Server Configuration",
-                                     epilog="🤦🏼Example:\npython syncerman.py -i 192.168.10.100 -p 65432",
+    parser = argparse.ArgumentParser(description="🛜 SyncerMan Server Configuration",
+                                     epilog="🤦🏼Example:\npython syncerman.py -i 192.168.10.100 -p 65432 --enable --url https://davoodya.ir --verbose" ,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-i', '--ip',
@@ -23,15 +31,28 @@ def parse_arguments():
                         metavar="1024-65535",
                         help=f"Enter port of the server(Default: {DEFAULT_PORT})")
 
+    parser.add_argument('--url', '-u',
+                        default='localhost',
+                        action=UrlSchemaRemover,
+                        dest='link')
+
+    parser.add_argument('--verbose', '-v',
+                        default=False,
+                        action='store_true')
+
+    parser.add_argument('--enable', action='store_true')
+    parser.add_argument('--disable', action='store_false', dest='enable')
+    parser.add_argument('--version', action='version', version="2.0")
+
 
     return parser.parse_args()
 
+
+
 def main():
     args = parse_arguments()
-    ip = args.ip
-    port = args.port
-
-    print(f"IP: {ip} & Port: {port}")
-
+    print(args)
+    print(args.enable)
+    print(args.link)
 if __name__ == '__main__':
     main()
