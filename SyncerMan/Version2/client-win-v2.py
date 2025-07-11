@@ -3,12 +3,46 @@ import socket
 from threading import Thread, Event
 from time import sleep
 import keyboard
+from keyboard import version
 from pyperclip import copy, paste
 import tkinter as tk
 from tkinter import filedialog # used for asking files for sending to linux server
 from os import path, makedirs, remove
 from shutil import make_archive
+import argparse
 from settings_v2 import SERVER_IP, SERVER_PORT, CLIENT_RECEIVE_PORT
+
+# DEFAULT_SERVER_IP = '127.0.0.1'
+# DEFAULT_SERVER_PORT = '65432'
+# DEFAULT_CLIENT_PORT = '65433'
+#
+# def parse_arguments():
+#     parser = argparse.ArgumentParser(
+#         prog='syncerman_client.py',
+#         description="🛰️ Yakuza SyncerMan C2 Client Side Configuration Guide",
+#         epilog="client-win.py --server-ip 192.168.1.103 --server-port 65432 --client-port 65433"
+#     )
+#
+#     parser.add_argument('--server-ip', default=DEFAULT_SERVER_IP,
+#                         help="Enter Linux Server IP Address", dest='server_ip')
+#
+#     parser.add_argument('--server-port', default=DEFAULT_SERVER_PORT,
+#                         choices=range(1024, 65535), metavar='[1024 to 65535]',
+#                         help="Enter Linux Server Port", dest='server_port')
+#
+#     parser.add_argument('--client-port', default=DEFAULT_CLIENT_PORT,
+#                         choices=range(1024, 65535), metavar='[1024 to 65535]',
+#                         help="Enter Windows Client Port", dest='client_port')
+#
+#     parser.add_argument('--cmd', default=False, action='store_true',
+#                         help="Run app in Command Mode(C2)")
+#
+#     parser.add_argument('--version', action='version',version='Yakuza SyncerMan Version 2.1',
+#                         help="Show version and exit")
+#
+#     return parser.parse_args()
+
+
 
 last_clipboard = ""
 
@@ -146,6 +180,7 @@ class Receiver:
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # Step 2: Bind the socket to the all interfaces on port 65433 and Start Listening
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("0.0.0.0", CLIENT_RECEIVE_PORT))
         server.listen(5)
 
@@ -336,6 +371,15 @@ def main():
         manager.stop()
 
 if __name__ == "__main__":
+    # args = parse_arguments()
+    # if args.cmd:
+    #     print("App Running on Command Line Mode, Yakuza-C2")
+    # else:
+    #     print("App Running Normal Mode(Syncer), Yakuza-SyncerMan")
+    #
+    # print("Client Running on below Configuration:\n")
+    # print(f"Server IP: {args.server_ip}\n Server Port: {args.server_port}\n Client Port: {args.client_port}\n")
+
     main()
 
 

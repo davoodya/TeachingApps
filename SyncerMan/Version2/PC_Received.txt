@@ -1,0 +1,4 @@
+Directory
+
+Waiting for clipboard or files from Linux on Port: 65433
+
