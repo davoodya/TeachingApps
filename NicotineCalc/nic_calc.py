@@ -45,7 +45,7 @@ def main():
 
     print("\n📊 Results:\n")
     print(f"- Nicotine from Pod/Vape/Podmod: {pod_nicotine:.2f} mg/day")
-    print(f"- Nicotine from Cigarettes: {cig_nicotine:.2f} mg/day")
+    print(f"- Nicotine from Cigarettes: {cig_nicotine:.2f} mg/day\n")
     print(f"✅ You now smoking {percent_of_cig:.1f} % of old cigarettes.")
 
     # If using Nicotine more than cigarettes
