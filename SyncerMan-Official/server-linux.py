@@ -11,7 +11,10 @@ from settings import WINDOWS_CLIENT_IP, CLIENT_RECEIVE_PORT
 
 last_clipboard = ""
 
+
 """ Section 3: Handle the received Data from Windows Client """
+
+
 def handle_client(conn, addr):
     """ this function handling received data from the Windows client """
     first_bytes = conn.recv(5)
@@ -82,8 +85,10 @@ def start_receive_server(port=65432):
 """ Section 4: Send Clipboard to Windows Client """
 def send_clipboard_to_windows(data="1"):
     global last_clipboard
+
     """ this function sends clipboard data from linux server to the Windows client """
     # Step 1: Get clipboard data if not argument is passed
+
     if data == "1":
         data = paste()
 
