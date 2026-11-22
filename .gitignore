@@ -2,3 +2,6 @@ venv/
 .venv/
 idea/
 .idea/
+Python-in-Black/Telegram-bot/.env
+Python-in-Black/.venv/
+Python-in-Black/.idea/
